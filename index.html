@@ -1,0 +1,2745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>ThumbsApp — Next-Gen Gaming Platform</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ----- MODERN RESET & VARIABLES ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #f3f4f8;
+            --bg-card: #ffffff;
+            --bg-secondary: #f0f2f5;
+            --text-primary: #1a1e2b;
+            --text-secondary: #6b7280;
+            --accent: #3b82f6;
+            --accent-dark: #2563eb;
+            --accent-glow: #60a5fa;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 1rem;
+            --radius-sm: 0.5rem;
+            --header-height: 70px;
+            --transition: all 0.2s ease;
+        }
+
+        .dark {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #60a5fa;
+            --accent-dark: #3b82f6;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            transition: var(--transition);
+            padding-top: var(--header-height);
+            min-height: 100vh;
+        }
+
+        /* ----- TYPOGRAPHY & UTILITIES ----- */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* ----- HEADER & NAVIGATION ----- */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            backdrop-filter: blur(8px);
+            background: rgba(var(--bg-card-rgb), 0.8);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .search-bar {
+            background: var(--bg-secondary);
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            width: 300px;
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            width: 100%;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--bg-secondary);
+            color: var(--accent);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .avatar:hover {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .avatar.small {
+            width: 32px;
+            height: 32px;
+            font-size: 0.875rem;
+        }
+
+        .avatar.large {
+            width: 80px;
+            height: 80px;
+            font-size: 2rem;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            min-width: 240px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            z-index: 1001;
+        }
+
+        .dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-primary);
+        }
+
+        .dropdown-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            color: var(--accent);
+        }
+
+        .theme-colors {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .theme-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .theme-dot:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-dot.blue { background: #3b82f6; }
+        .theme-dot.red { background: #ef4444; }
+        .theme-dot.green { background: #10b981; }
+        .theme-dot.purple { background: #8b5cf6; }
+        .theme-dot.orange { background: #f97316; }
+
+        /* ----- MAIN GRID LAYOUT ----- */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 240px 1fr;
+            }
+            .right-sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            .left-sidebar {
+                display: none;
+            }
+        }
+
+        /* ----- SIDEBARS ----- */
+        .sidebar {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 1.25rem;
+            height: fit-content;
+            position: sticky;
+            top: calc(var(--header-height) + 1.5rem);
+        }
+
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .sidebar-item i {
+            width: 20px;
+            color: var(--accent);
+        }
+
+        .badge {
+            background: var(--accent);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            margin-left: auto;
+        }
+
+        /* ----- CARDS & FEED ----- */
+        .feed {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 1.25rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .create-post {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .create-post input {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .create-post input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-info h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .post-info span {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .post-content {
+            margin-bottom: 1rem;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 1.5rem;
+            padding: 0.75rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .post-action {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+        }
+
+        .post-action:hover {
+            background: var(--bg-secondary);
+            color: var(--accent);
+        }
+
+        /* ----- GAMING ARENA ----- */
+        .arena-card {
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent-glow));
+            color: white;
+            border: none;
+        }
+
+        .duel-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin: 2rem 0;
+        }
+
+        .player {
+            text-align: center;
+        }
+
+        .vs {
+            font-size: 2rem;
+            font-weight: 800;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .score {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* ----- WALLET & BALANCE ----- */
+        .wallet-card {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .balance {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        /* ----- TOURNAMENT BRACKET ----- */
+        .bracket {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .bracket-round {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem;
+        }
+
+        .bracket-match {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        /* ----- LEADERBOARD ----- */
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .rank {
+            font-weight: 700;
+            color: var(--accent);
+            width: 30px;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: 600;
+        }
+
+        .player-points {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* ----- LIVE CHAT ----- */
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+        }
+
+        .chat-message {
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            color: var(--text-primary);
+        }
+
+        /* ----- ACHIEVEMENTS & BADGES ----- */
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .badge-item {
+            text-align: center;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+        }
+
+        .badge-icon {
+            font-size: 2rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .badge-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* ----- MODAL ----- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* ----- TOAST NOTIFICATIONS ----- */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 3000;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* ----- FOOTER ----- */
+        .footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 3rem 1.5rem 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-section a:hover {
+            color: var(--accent);
+        }
+
+        /* ----- LOADING SPINNER ----- */
+        .spinner {
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ----- PROGRESS BAR ----- */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        /* ----- RESPONSIVE ----- */
+        @media (max-width: 768px) {
+            .search-bar {
+                display: none;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .bracket {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ----- ANIMATIONS ----- */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .live-badge {
+            background: var(--danger);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body class="">
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo-area">
+            <div class="logo" onclick="app.navigate('home')">👍 ThumbsApp</div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="globalSearch" placeholder="Search games, players..." onkeyup="app.search(this.value)">
+            </div>
+        </div>
+
+        <div class="nav-menu">
+            <div class="nav-item active" onclick="app.navigate('home')">Home</div>
+            <div class="nav-item" onclick="app.navigate('arena')">Arena</div>
+            <div class="nav-item" onclick="app.navigate('tournaments')">Tournaments</div>
+            <div class="nav-item" onclick="app.navigate('leaderboards')">Leaderboards</div>
+        </div>
+
+        <div class="user-menu">
+            <i class="fas fa-bell" style="font-size: 1.25rem; cursor: pointer;" onclick="app.showNotifications()"></i>
+            <i class="fas fa-envelope" style="font-size: 1.25rem; cursor: pointer;" onclick="app.showMessages()"></i>
+            <div class="avatar" onclick="app.toggleUserMenu()" id="userAvatar">
+                <span id="avatarInitial">G</span>
+            </div>
+            
+            <!-- User Dropdown -->
+            <div class="dropdown" id="userDropdown">
+                <div class="dropdown-item" onclick="app.showProfile()">
+                    <i class="fas fa-user"></i> Profile
+                </div>
+                <div class="dropdown-item" onclick="app.showWallet()">
+                    <i class="fas fa-wallet"></i> Wallet
+                </div>
+                <div class="dropdown-item" onclick="app.showSettings()">
+                    <i class="fas fa-cog"></i> Settings
+                </div>
+                <div class="dropdown-item" onclick="app.showAchievements()">
+                    <i class="fas fa-trophy"></i> Achievements
+                </div>
+                <div class="theme-colors">
+                    <div class="theme-dot blue" onclick="app.setTheme('blue')"></div>
+                    <div class="theme-dot red" onclick="app.setTheme('red')"></div>
+                    <div class="theme-dot green" onclick="app.setTheme('green')"></div>
+                    <div class="theme-dot purple" onclick="app.setTheme('purple')"></div>
+                    <div class="theme-dot orange" onclick="app.setTheme('orange')"></div>
+                </div>
+                <div class="dropdown-item" onclick="app.toggleDarkMode()">
+                    <i class="fas fa-moon"></i> Dark/Light
+                </div>
+                <div class="dropdown-item" onclick="app.showLanguageSelector()">
+                    <i class="fas fa-language"></i> <span id="currentLanguage">English</span>
+                </div>
+                <div class="dropdown-item" onclick="app.logout()" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+                <div class="dropdown-item" onclick="app.showLogin()" id="loginBtn" style="display: none;">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+        <!-- LEFT SIDEBAR -->
+        <aside class="left-sidebar sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Social</div>
+                <div class="sidebar-item" onclick="app.showFriends()">
+                    <i class="fas fa-user-friends"></i> Friends
+                    <span class="badge" id="friendsBadge">0</span>
+                </div>
+                <div class="sidebar-item" onclick="app.showMessages()">
+                    <i class="fas fa-comment"></i> Messages
+                    <span class="badge" id="messagesBadge">0</span>
+                </div>
+                <div class="sidebar-item" onclick="app.showGroups()">
+                    <i class="fas fa-users"></i> Groups
+                </div>
+                <div class="sidebar-item" onclick="app.showEvents()">
+                    <i class="fas fa-calendar"></i> Events
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Gaming</div>
+                <div class="sidebar-item" onclick="app.navigate('arena')">
+                    <i class="fas fa-video"></i> Live Arenas
+                    <span class="badge" style="background: var(--danger);" id="liveCount">0</span>
+                </div>
+                <div class="sidebar-item" onclick="app.navigate('tournaments')">
+                    <i class="fas fa-trophy"></i> Tournaments
+                </div>
+                <div class="sidebar-item" onclick="app.showChallenges()">
+                    <i class="fas fa-bolt"></i> Challenges
+                </div>
+                <div class="sidebar-item" onclick="app.navigate('leaderboards')">
+                    <i class="fas fa-chart-line"></i> Leaderboards
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Business</div>
+                <div class="sidebar-item" onclick="app.showBusiness()">
+                    <i class="fas fa-briefcase"></i> Business Suite
+                </div>
+                <div class="sidebar-item" onclick="app.showAds()">
+                    <i class="fas fa-ad"></i> Ad Manager
+                </div>
+                <div class="sidebar-item" onclick="app.showAnalytics()">
+                    <i class="fas fa-chart-pie"></i> Analytics
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">AI Assistant</div>
+                <div class="sidebar-item" onclick="app.openAI()">
+                    <i class="fas fa-robot"></i> Wiki AI (Grok)
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="feed" id="mainContent">
+            <!-- HOME PAGE -->
+            <div id="home-page" class="page active">
+                <!-- Create Post -->
+                <div class="card create-post">
+                    <div class="avatar small" id="postAvatar">G</div>
+                    <input type="text" placeholder="What's on your mind? Create a challenge..." onclick="app.openCreateModal()" id="postInput">
+                </div>
+
+                <!-- Feed Posts -->
+                <div id="feedContainer">
+                    <div class="spinner"></div>
+                </div>
+                <button class="btn btn-outline" style="width: 100%;" onclick="app.loadMore()" id="loadMoreBtn">Load More</button>
+            </div>
+
+            <!-- ARENA PAGE -->
+            <div id="arena-page" class="page">
+                <div class="card arena-card">
+                    <h2 style="margin-bottom: 1rem;">🎮 Reaction Duel Arena</h2>
+                    <div class="duel-area">
+                        <div class="player">
+                            <div class="avatar large" id="player1Avatar">A</div>
+                            <h3 id="player1Name">Alice</h3>
+                            <div class="score" id="scoreA">0</div>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="player">
+                            <div class="avatar large" id="player2Avatar">B</div>
+                            <h3 id="player2Name">Bob</h3>
+                            <div class="score" id="scoreB">0</div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.1); border-radius: var(--radius-sm); padding: 1rem; margin: 1rem 0;">
+                        <i class="fas fa-shield-alt"></i> Anti-Cheat Active · Escrow Locked <span id="entryAmount">10</span> THB · 10% Fee
+                    </div>
+
+                    <div class="game-controls">
+                        <button class="btn" onclick="app.startGame()" id="startGameBtn">▶ Start Game</button>
+                        <button class="btn" onclick="app.playRound()" id="playRoundBtn" disabled>🎮 Play Round</button>
+                        <button class="btn btn-outline" onclick="app.watchGame()"><i class="fas fa-eye"></i> Watch</button>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; color: rgba(255,255,255,0.8);">
+                        <span><i class="fas fa-users"></i> <span id="viewerCount">234</span> watching</span>
+                        <span><i class="fas fa-gift"></i> Prize: <span id="prizeAmount">20</span> THB</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🏆 Live Tournaments</h3>
+                    <div class="bracket" id="tournamentBracket">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>⚖️ Legal & Compliance</h3>
+                    <p>Age verification required · Geo-location active · Responsible gaming tools</p>
+                    <div class="progress-bar" style="margin-top: 1rem;">
+                        <div class="progress-fill" id="complianceProgress" style="width: 75%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOURNAMENTS PAGE -->
+            <div id="tournaments-page" class="page">
+                <div class="card">
+                    <h2>Active Tournaments</h2>
+                    <div id="tournamentsList"></div>
+                </div>
+            </div>
+
+            <!-- LEADERBOARDS PAGE -->
+            <div id="leaderboards-page" class="page">
+                <div class="card">
+                    <h2>Global Rankings</h2>
+                    <div id="leaderboardsList"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- RIGHT SIDEBAR -->
+        <aside class="right-sidebar sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Live Now</div>
+                <div id="liveStreams"></div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Wallet</div>
+                <div class="wallet-card card">
+                    <div>Your Balance</div>
+                    <div class="balance" id="walletBalance">0 THB</div>
+                    <button class="btn" style="width: 100%;" onclick="app.showDeposit()">Deposit</button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Leaderboard</div>
+                <div id="sidebarLeaderboard"></div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Live Chat</div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input">
+                    <input type="text" placeholder="Type..." id="chatInput" onkeypress="app.handleChatKeypress(event)">
+                    <button class="btn" style="padding: 0.5rem;" onclick="app.sendChat()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Achievements</div>
+                <div class="badges-grid" id="achievementsList"></div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="ad-container card" style="background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white;">
+                    <h4>Sponsored</h4>
+                    <p>Premium Gaming Mouse - 50% OFF</p>
+                    <button class="btn btn-outline" style="border-color: white; color: white;" onclick="app.openAd()">Shop Now</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#" onclick="app.showDonation()">Donation</a></li>
+                    <li><a href="#" onclick="app.showSponsor()">Sponsor</a></li>
+                    <li><a href="#" onclick="app.showHelp()">Help Center</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#" onclick="app.showTerms()">Terms</a></li>
+                    <li><a href="#" onclick="app.showPrivacy()">Privacy</a></li>
+                    <li><a href="#" onclick="app.showAbout()">About</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Platform</h4>
+                <ul>
+                    <li><a href="#" onclick="app.navigate('home')">Home</a></li>
+                    <li><a href="#" onclick="app.navigate('arena')">Arena</a></li>
+                    <li><a href="#" onclick="app.navigate('tournaments')">Tournaments</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#" onclick="app.showAgeVerification()">Age Verification</a></li>
+                    <li><a href="#" onclick="app.showCompliance()">Geo-Compliance</a></li>
+                    <li><a href="#" onclick="app.showResponsible()">Responsible Gaming</a></li>
+                </ul>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 2rem; color: var(--text-secondary);">
+            © 2026 ThumbsApp. All rights reserved. v2.0.0
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="authTitle">Login</h2>
+                <button class="close-btn" onclick="app.closeModal('authModal')">&times;</button>
+            </div>
+            <div id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••">
+                </div>
+                <div style="text-align: right; margin-bottom: 1rem;">
+                    <a href="#" onclick="app.showForgotPassword()">Forgot password?</a>
+                </div>
+                <button class="btn" style="width: 100%;" onclick="app.login()">Sign In</button>
+                <p style="text-align: center; margin-top: 1rem;">
+                    Don't have an account? <a href="#" onclick="app.showRegister()">Register</a>
+                </p>
+            </div>
+            <div id="registerForm" style="display: none;">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="regUsername" placeholder="Choose username">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="regEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="regPassword" placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="regConfirmPassword" placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                    <label>Country</label>
+                    <select id="regCountry">
+                        <option value="US">United States</option>
+                        <option value="SG">Singapore</option>
+                        <option value="GB">United Kingdom</option>
+                        <option value="FR">France</option>
+                        <option value="DE">Germany</option>
+                        <option value="JP">Japan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" id="regDob">
+                </div>
+                <button class="btn" style="width: 100%;" onclick="app.register()">Create Account</button>
+                <p style="text-align: center; margin-top: 1rem;">
+                    Already have an account? <a href="#" onclick="app.showLogin()">Sign in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="createModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Challenge</h2>
+                <button class="close-btn" onclick="app.closeModal('createModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="challengeTitle" placeholder="Enter challenge title">
+            </div>
+            <div class="form-group">
+                <label>Game</label>
+                <select id="challengeGame">
+                    <option value="Reaction Duel">Reaction Duel</option>
+                    <option value="Speed Chess">Speed Chess</option>
+                    <option value="Memory Match">Memory Match</option>
+                    <option value="Strategy Battle">Strategy Battle</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Entry Fee (THB)</label>
+                <input type="number" id="challengeEntryFee" value="10" min="10" step="10">
+            </div>
+            <div class="form-group">
+                <label>Difficulty</label>
+                <select id="challengeDifficulty">
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="challengeDescription" rows="3" placeholder="Describe your challenge..."></textarea>
+            </div>
+            <button class="btn" style="width: 100%;" onclick="app.createPost()">Create Challenge</button>
+        </div>
+    </div>
+
+    <div class="modal" id="donationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Support Player</h2>
+                <button class="close-btn" onclick="app.closeModal('donationModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Amount (THB)</label>
+                <input type="number" id="donateAmount" value="10" min="10">
+            </div>
+            <div class="form-group">
+                <label>Message (optional)</label>
+                <textarea id="donateMessage" rows="3" placeholder="Good luck!"></textarea>
+            </div>
+            <button class="btn" style="width: 100%;" onclick="app.donate()">Send Donation</button>
+        </div>
+    </div>
+
+    <div class="modal" id="depositModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Deposit Funds</h2>
+                <button class="close-btn" onclick="app.closeModal('depositModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Amount (THB)</label>
+                <input type="number" id="depositAmount" value="100" min="100" step="100">
+            </div>
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select id="paymentMethod">
+                    <option value="credit">Credit Card</option>
+                    <option value="debit">Debit Card</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="crypto">Cryptocurrency</option>
+                </select>
+            </div>
+            <button class="btn" style="width: 100%;" onclick="app.processDeposit()">Process Deposit</button>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ============ COMPLETE BACKEND SIMULATION ============
+        class Database {
+            constructor() {
+                this.users = new Map();
+                this.posts = new Map();
+                this.messages = new Map();
+                this.tournaments = new Map();
+                this.games = new Map();
+                this.transactions = new Map();
+                this.achievements = new Map();
+                this.initSampleData();
+            }
+
+            initSampleData() {
+                // Sample users
+                this.users.set('1', {
+                    id: '1',
+                    username: 'ProGamer',
+                    email: 'pro@example.com',
+                    password: 'hashed_pass',
+                    country: 'US',
+                    level: 25,
+                    xp: 12450,
+                    balance: 2450,
+                    achievements: ['first_win', 'pro_player', 'streak_10'],
+                    friends: ['2', '3'],
+                    createdAt: new Date().toISOString()
+                });
+
+                this.users.set('2', {
+                    id: '2',
+                    username: 'GameMaster',
+                    email: 'master@example.com',
+                    password: 'hashed_pass',
+                    country: 'SG',
+                    level: 22,
+                    xp: 11230,
+                    balance: 1800,
+                    achievements: ['first_win', 'pro_player'],
+                    friends: ['1'],
+                    createdAt: new Date().toISOString()
+                });
+
+                // Sample posts
+                this.posts.set('1', {
+                    id: '1',
+                    userId: '1',
+                    author: 'ProGamer',
+                    content: '🔥 Looking for reaction duel partner! Entry 10 THB',
+                    game: 'Reaction Duel',
+                    entryFee: 10,
+                    likes: 23,
+                    comments: 5,
+                    shares: 2,
+                    timestamp: Date.now() - 120000
+                });
+
+                this.posts.set('2', {
+                    id: '2',
+                    userId: '2',
+                    author: 'GameMaster',
+                    content: '🏆 Speed chess tournament starting soon! Join now',
+                    game: 'Speed Chess',
+                    entryFee: 20,
+                    likes: 45,
+                    comments: 8,
+                    shares: 12,
+                    timestamp: Date.now() - 900000
+                });
+
+                // Sample tournaments
+                this.tournaments.set('1', {
+                    id: '1',
+                    name: 'Speed Chess Masters',
+                    entryFee: 50,
+                    prize: 500,
+                    participants: 8,
+                    maxParticipants: 16,
+                    status: 'active',
+                    startTime: Date.now() + 3600000
+                });
+
+                this.tournaments.set('2', {
+                    id: '2',
+                    name: 'Reaction Duel Pro',
+                    entryFee: 25,
+                    prize: 250,
+                    participants: 12,
+                    maxParticipants: 16,
+                    status: 'active',
+                    startTime: Date.now() + 7200000
+                });
+
+                // Sample achievements
+                this.achievements.set('first_win', {
+                    id: 'first_win',
+                    name: 'First Win',
+                    icon: '🏆',
+                    description: 'Win your first game'
+                });
+
+                this.achievements.set('pro_player', {
+                    id: 'pro_player',
+                    name: 'Pro Player',
+                    icon: '⭐',
+                    description: 'Reach level 10'
+                });
+
+                this.achievements.set('streak_10', {
+                    id: 'streak_10',
+                    name: '10 Streak',
+                    icon: '🔥',
+                    description: 'Win 10 games in a row'
+                });
+            }
+
+            // User methods
+            createUser(userData) {
+                const id = Date.now().toString();
+                const user = {
+                    id,
+                    ...userData,
+                    createdAt: new Date().toISOString(),
+                    balance: 100,
+                    level: 1,
+                    xp: 0,
+                    achievements: [],
+                    friends: []
+                };
+                this.users.set(id, user);
+                return user;
+            }
+
+            getUserByEmail(email) {
+                return Array.from(this.users.values()).find(u => u.email === email);
+            }
+
+            getUserByUsername(username) {
+                return Array.from(this.users.values()).find(u => u.username === username);
+            }
+
+            getUser(id) {
+                return this.users.get(id);
+            }
+
+            updateUser(id, data) {
+                const user = this.users.get(id);
+                if (user) {
+                    Object.assign(user, data);
+                    this.users.set(id, user);
+                }
+                return user;
+            }
+
+            // Post methods
+            createPost(postData) {
+                const id = Date.now().toString();
+                const post = {
+                    id,
+                    ...postData,
+                    likes: 0,
+                    comments: 0,
+                    shares: 0,
+                    timestamp: Date.now()
+                };
+                this.posts.set(id, post);
+                return post;
+            }
+
+            getPosts(limit = 10, offset = 0) {
+                return Array.from(this.posts.values())
+                    .sort((a, b) => b.timestamp - a.timestamp)
+                    .slice(offset, offset + limit);
+            }
+
+            likePost(postId, userId) {
+                const post = this.posts.get(postId);
+                if (post) {
+                    post.likes++;
+                    this.posts.set(postId, post);
+                }
+                return post;
+            }
+
+            // Tournament methods
+            getActiveTournaments() {
+                return Array.from(this.tournaments.values())
+                    .filter(t => t.status === 'active');
+            }
+
+            joinTournament(tournamentId, userId) {
+                const tournament = this.tournaments.get(tournamentId);
+                if (tournament && tournament.participants < tournament.maxParticipants) {
+                    tournament.participants++;
+                    this.tournaments.set(tournamentId, tournament);
+                    return true;
+                }
+                return false;
+            }
+
+            // Transaction methods
+            createTransaction(transactionData) {
+                const id = Date.now().toString();
+                const transaction = {
+                    id,
+                    ...transactionData,
+                    timestamp: Date.now()
+                };
+                this.transactions.set(id, transaction);
+                
+                // Update user balance
+                const user = this.users.get(transactionData.userId);
+                if (user) {
+                    if (transactionData.type === 'deposit') {
+                        user.balance += transactionData.amount;
+                    } else if (transactionData.type === 'withdrawal' || transactionData.type === 'game_entry') {
+                        user.balance -= transactionData.amount;
+                    }
+                    this.users.set(user.id, user);
+                }
+                
+                return transaction;
+            }
+        }
+
+        class WebSocketServer {
+            constructor() {
+                this.clients = new Map();
+                this.rooms = new Map();
+                this.messageHistory = [];
+                this.init();
+            }
+
+            init() {
+                // Simulate real-time updates
+                setInterval(() => this.broadcastGameUpdates(), 5000);
+                setInterval(() => this.updateViewerCounts(), 10000);
+            }
+
+            addClient(clientId, socket) {
+                this.clients.set(clientId, {
+                    id: clientId,
+                    socket,
+                    rooms: new Set(),
+                    lastPing: Date.now()
+                });
+            }
+
+            joinRoom(clientId, room) {
+                const client = this.clients.get(clientId);
+                if (client) {
+                    client.rooms.add(room);
+                    if (!this.rooms.has(room)) {
+                        this.rooms.set(room, new Set());
+                    }
+                    this.rooms.get(room).add(clientId);
+                }
+            }
+
+            leaveRoom(clientId, room) {
+                const client = this.clients.get(clientId);
+                if (client) {
+                    client.rooms.delete(room);
+                    this.rooms.get(room)?.delete(clientId);
+                }
+            }
+
+            sendToRoom(room, message) {
+                const clients = this.rooms.get(room) || new Set();
+                clients.forEach(clientId => {
+                    const client = this.clients.get(clientId);
+                    if (client && client.socket) {
+                        client.socket(message);
+                    }
+                });
+            }
+
+            broadcast(message) {
+                this.clients.forEach((_, clientId) => {
+                    const client = this.clients.get(clientId);
+                    if (client && client.socket) {
+                        client.socket(message);
+                    }
+                });
+            }
+
+            broadcastGameUpdates() {
+                const updates = {
+                    type: 'game_update',
+                    games: Array.from(app.gameEngine.activeGames.values()).map(g => ({
+                        id: g.id,
+                        player1: g.player1,
+                        player2: g.player2,
+                        score1: g.score1,
+                        score2: g.score2,
+                        status: g.status
+                    }))
+                };
+                this.broadcast(updates);
+            }
+
+            updateViewerCounts() {
+                const counts = {
+                    type: 'viewer_update',
+                    counts: {
+                        arena: Math.floor(Math.random() * 500) + 200,
+                        tournaments: Math.floor(Math.random() * 300) + 100
+                    }
+                };
+                this.broadcast(counts);
+            }
+
+            addChatMessage(user, message) {
+                const chatMessage = {
+                    type: 'chat',
+                    user,
+                    message,
+                    timestamp: Date.now()
+                };
+                this.messageHistory.push(chatMessage);
+                if (this.messageHistory.length > 100) {
+                    this.messageHistory.shift();
+                }
+                this.broadcast(chatMessage);
+            }
+
+            getMessageHistory() {
+                return this.messageHistory;
+            }
+        }
+
+        class GameEngine {
+            constructor() {
+                this.activeGames = new Map();
+                this.gameQueue = [];
+                this.matchmakingTimeout = 30000;
+            }
+
+            createGame(player1, player2, entryFee = 10) {
+                const gameId = Date.now().toString();
+                const game = {
+                    id: gameId,
+                    player1,
+                    player2,
+                    score1: 0,
+                    score2: 0,
+                    entryFee,
+                    status: 'waiting',
+                    startTime: Date.now(),
+                    lastMove: Date.now(),
+                    moves: []
+                };
+                this.activeGames.set(gameId, game);
+                return game;
+            }
+
+            startGame(gameId) {
+                const game = this.activeGames.get(gameId);
+                if (game) {
+                    game.status = 'active';
+                    game.startTime = Date.now();
+                }
+                return game;
+            }
+
+            playRound(gameId, player) {
+                const game = this.activeGames.get(gameId);
+                if (!game || game.status !== 'active') return null;
+
+                // Simulate game logic
+                const score = Math.floor(Math.random() * 10);
+                if (player === game.player1.id) {
+                    game.score1 += score;
+                } else if (player === game.player2.id) {
+                    game.score2 += score;
+                }
+
+                game.lastMove = Date.now();
+                game.moves.push({
+                    player,
+                    score,
+                    timestamp: Date.now()
+                });
+
+                // Check for game end
+                if (game.score1 >= 50 || game.score2 >= 50) {
+                    game.status = 'finished';
+                    game.winner = game.score1 >= 50 ? game.player1 : game.player2;
+                    this.processGameEnd(game);
+                }
+
+                return game;
+            }
+
+            processGameEnd(game) {
+                // Process winnings
+                const winner = game.winner;
+                const loser = winner.id === game.player1.id ? game.player2 : game.player1;
+                
+                // Calculate winnings (minus fee)
+                const prize = game.entryFee * 2 * 0.9;
+                
+                // Update balances
+                app.db.createTransaction({
+                    userId: winner.id,
+                    amount: prize,
+                    type: 'game_win',
+                    description: `Won game against ${loser.username}`
+                });
+
+                // Award XP
+                const winnerUser = app.db.getUser(winner.id);
+                if (winnerUser) {
+                    winnerUser.xp += 100;
+                    app.db.updateUser(winnerUser.id, winnerUser);
+                }
+
+                // Award achievements
+                this.checkAchievements(winnerUser);
+            }
+
+            checkAchievements(user) {
+                // Check for first win
+                const transactions = Array.from(app.db.transactions.values())
+                    .filter(t => t.userId === user.id && t.type === 'game_win');
+                
+                if (transactions.length === 1 && !user.achievements.includes('first_win')) {
+                    user.achievements.push('first_win');
+                    app.db.updateUser(user.id, user);
+                    app.showToast('🏆 Achievement Unlocked: First Win!', 'success');
+                }
+
+                // Check for level up
+                const newLevel = Math.floor(user.xp / 1000) + 1;
+                if (newLevel > user.level) {
+                    user.level = newLevel;
+                    app.db.updateUser(user.id, user);
+                    app.showToast(`🎉 Level Up! You are now level ${newLevel}`, 'success');
+                }
+            }
+
+            addToQueue(user) {
+                if (!this.gameQueue.find(u => u.id === user.id)) {
+                    this.gameQueue.push(user);
+                    
+                    // Check for match
+                    if (this.gameQueue.length >= 2) {
+                        const player1 = this.gameQueue.shift();
+                        const player2 = this.gameQueue.shift();
+                        return this.createGame(player1, player2);
+                    }
+                }
+                return null;
+            }
+
+            removeFromQueue(userId) {
+                this.gameQueue = this.gameQueue.filter(u => u.id !== userId);
+            }
+        }
+
+        // Main Application Class
+        class ThumbsApp {
+            constructor() {
+                this.db = new Database();
+                this.ws = new WebSocketServer();
+                this.gameEngine = new GameEngine();
+                this.currentUser = null;
+                this.currentPage = 'home';
+                this.darkMode = false;
+                this.language = 'en';
+                this.translations = this.loadTranslations();
+                this.postOffset = 0;
+                this.postsPerPage = 5;
+                
+                this.init();
+            }
+
+            init() {
+                this.checkAuth();
+                this.renderFeed();
+                this.updateSidebars();
+                this.setupEventListeners();
+                this.startRealTimeUpdates();
+                
+                // Simulate WebSocket connection
+                this.ws.addClient('client1', (msg) => this.handleWebSocketMessage(msg));
+                this.ws.joinRoom('client1', 'global');
+            }
+
+            loadTranslations() {
+                return {
+                    en: {
+                        home: 'Home',
+                        arena: 'Arena',
+                        tournaments: 'Tournaments',
+                        leaderboards: 'Leaderboards',
+                        login: 'Login',
+                        register: 'Register',
+                        logout: 'Logout'
+                    },
+                    es: {
+                        home: 'Inicio',
+                        arena: 'Arena',
+                        tournaments: 'Torneos',
+                        leaderboards: 'Clasificaciones',
+                        login: 'Iniciar sesión',
+                        register: 'Registrarse',
+                        logout: 'Cerrar sesión'
+                    }
+                };
+            }
+
+            setupEventListeners() {
+                window.addEventListener('click', (e) => {
+                    if (!e.target.closest('.user-menu')) {
+                        document.getElementById('userDropdown').classList.remove('show');
+                    }
+                });
+
+                document.getElementById('chatInput')?.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.sendChat();
+                });
+
+                // Global search with debounce
+                let searchTimeout;
+                document.getElementById('globalSearch')?.addEventListener('input', (e) => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => this.search(e.target.value), 300);
+                });
+            }
+
+            startRealTimeUpdates() {
+                // Update viewer counts
+                setInterval(() => {
+                    const viewerCount = document.getElementById('viewerCount');
+                    if (viewerCount) {
+                        const newCount = Math.floor(Math.random() * 500) + 200;
+                        viewerCount.textContent = newCount;
+                    }
+                }, 10000);
+
+                // Update live streams
+                setInterval(() => {
+                    this.updateLiveStreams();
+                }, 15000);
+            }
+
+            handleWebSocketMessage(message) {
+                if (message.type === 'chat') {
+                    this.displayChatMessage(message);
+                } else if (message.type === 'game_update') {
+                    this.updateGameDisplay(message.games);
+                } else if (message.type === 'viewer_update') {
+                    this.updateViewerCounts(message.counts);
+                }
+            }
+
+            // ============ AUTHENTICATION ============
+            checkAuth() {
+                const savedUser = localStorage.getItem('thumbsapp_user');
+                if (savedUser) {
+                    this.currentUser = JSON.parse(savedUser);
+                    this.updateUIForAuth();
+                } else {
+                    this.showLogin();
+                }
+            }
+
+            showLogin() {
+                document.getElementById('authTitle').textContent = 'Login';
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('registerForm').style.display = 'none';
+                document.getElementById('authModal').classList.add('active');
+            }
+
+            showRegister() {
+                document.getElementById('authTitle').textContent = 'Register';
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('registerForm').style.display = 'block';
+                document.getElementById('authModal').classList.add('active');
+            }
+
+            login() {
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                if (!email || !password) {
+                    this.showToast('Please fill all fields', 'error');
+                    return;
+                }
+
+                // Simulate API call
+                setTimeout(() => {
+                    const user = this.db.getUserByEmail(email);
+                    if (user && password === 'password') { // Simple password check for demo
+                        this.currentUser = user;
+                        localStorage.setItem('thumbsapp_user', JSON.stringify(user));
+                        this.updateUIForAuth();
+                        this.closeModal('authModal');
+                        this.showToast(`Welcome back, ${user.username}!`, 'success');
+                        this.renderFeed();
+                        this.updateSidebars();
+                    } else {
+                        this.showToast('Invalid email or password', 'error');
+                    }
+                }, 500);
+            }
+
+            register() {
+                const username = document.getElementById('regUsername').value;
+                const email = document.getElementById('regEmail').value;
+                const password = document.getElementById('regPassword').value;
+                const confirmPassword = document.getElementById('regConfirmPassword').value;
+                const country = document.getElementById('regCountry').value;
+                const dob = document.getElementById('regDob').value;
+
+                if (!username || !email || !password || !confirmPassword || !dob) {
+                    this.showToast('Please fill all fields', 'error');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    this.showToast('Passwords do not match', 'error');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    this.showToast('Password must be at least 6 characters', 'error');
+                    return;
+                }
+
+                // Check age (18+)
+                const age = new Date().getFullYear() - new Date(dob).getFullYear();
+                if (age < 18) {
+                    this.showToast('You must be 18 or older to register', 'error');
+                    return;
+                }
+
+                // Check if user exists
+                if (this.db.getUserByEmail(email) || this.db.getUserByUsername(username)) {
+                    this.showToast('User already exists', 'error');
+                    return;
+                }
+
+                // Simulate API call
+                setTimeout(() => {
+                    const newUser = this.db.createUser({
+                        username,
+                        email,
+                        password: 'hashed_' + password,
+                        country,
+                        dob
+                    });
+
+                    this.currentUser = newUser;
+                    localStorage.setItem('thumbsapp_user', JSON.stringify(newUser));
+                    this.updateUIForAuth();
+                    this.closeModal('authModal');
+                    this.showToast('Account created successfully!', 'success');
+                    
+                    // Award welcome bonus
+                    this.db.createTransaction({
+                        userId: newUser.id,
+                        amount: 100,
+                        type: 'welcome_bonus',
+                        description: 'Welcome bonus'
+                    });
+                    
+                    this.updateSidebars();
+                }, 500);
+            }
+
+            logout() {
+                this.currentUser = null;
+                localStorage.removeItem('thumbsapp_user');
+                this.updateUIForAuth();
+                this.showToast('Logged out successfully');
+                this.showLogin();
+            }
+
+            updateUIForAuth() {
+                const avatar = document.getElementById('userAvatar');
+                const avatarInitial = document.getElementById('avatarInitial');
+                const postAvatar = document.getElementById('postAvatar');
+                const loginBtn = document.getElementById('loginBtn');
+                const logoutBtn = document.getElementById('logoutBtn');
+                
+                if (this.currentUser) {
+                    avatarInitial.textContent = this.currentUser.username[0].toUpperCase();
+                    if (postAvatar) postAvatar.textContent = this.currentUser.username[0].toUpperCase();
+                    loginBtn.style.display = 'none';
+                    logoutBtn.style.display = 'flex';
+                    
+                    // Update wallet balance
+                    document.getElementById('walletBalance').textContent = `${this.currentUser.balance} THB`;
+                } else {
+                    avatarInitial.textContent = 'G';
+                    if (postAvatar) postAvatar.textContent = 'G';
+                    loginBtn.style.display = 'flex';
+                    logoutBtn.style.display = 'none';
+                    document.getElementById('walletBalance').textContent = '0 THB';
+                }
+            }
+
+            // ============ NAVIGATION ============
+            navigate(page) {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(page + '-page')?.classList.add('active');
+                
+                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                const activeNav = Array.from(document.querySelectorAll('.nav-item')).find(
+                    item => item.textContent.toLowerCase().includes(page)
+                );
+                if (activeNav) activeNav.classList.add('active');
+                
+                this.currentPage = page;
+                
+                // Load page-specific data
+                if (page === 'tournaments') {
+                    this.renderTournaments();
+                } else if (page === 'leaderboards') {
+                    this.renderLeaderboards();
+                } else if (page === 'arena') {
+                    this.updateArena();
+                }
+            }
+
+            // ============ FEED ============
+            renderFeed() {
+                const container = document.getElementById('feedContainer');
+                if (!container) return;
+                
+                const posts = this.db.getPosts(this.postsPerPage, this.postOffset);
+                
+                if (posts.length === 0) {
+                    container.innerHTML = '<div class="card" style="text-align: center; padding: 3rem;">No posts yet. Be the first to create a challenge!</div>';
+                    return;
+                }
+                
+                let html = '';
+                posts.forEach(post => {
+                    html += `
+                        <div class="card" id="post-${post.id}">
+                            <div class="post-header">
+                                <div class="avatar small">${post.author[0]}</div>
+                                <div class="post-info">
+                                    <h4>${post.author}</h4>
+                                    <span>${this.formatTime(post.timestamp)}</span>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                ${post.content}
+                                <div style="margin-top: 0.5rem; background: var(--bg-secondary); padding: 0.25rem 0.75rem; border-radius: 2rem; display: inline-block; font-size: 0.875rem;">
+                                    🎮 ${post.game} · Entry: ${post.entryFee} THB
+                                </div>
+                            </div>
+                            <div class="post-stats">
+                                <span><i class="fas fa-thumbs-up"></i> <span id="likes-${post.id}">${post.likes}</span></span>
+                                <span><i class="fas fa-comment"></i> ${post.comments}</span>
+                                <span><i class="fas fa-share"></i> ${post.shares}</span>
+                            </div>
+                            <div class="post-actions">
+                                <div class="post-action" onclick="app.likePost('${post.id}')"><i class="fas fa-thumbs-up"></i> Like</div>
+                                <div class="post-action" onclick="app.commentPost('${post.id}')"><i class="fas fa-comment"></i> Comment</div>
+                                <div class="post-action" onclick="app.sharePost('${post.id}')"><i class="fas fa-share"></i> Share</div>
+                                <div class="post-action" onclick="app.joinChallenge('${post.id}')"><i class="fas fa-gamepad"></i> Join</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+                // Update load more button
+                const totalPosts = this.db.posts.size;
+                document.getElementById('loadMoreBtn').style.display = 
+                    this.postOffset + this.postsPerPage < totalPosts ? 'block' : 'none';
+            }
+
+            loadMore() {
+                this.postOffset += this.postsPerPage;
+                this.renderFeed();
+            }
+
+            createPost() {
+                if (!this.currentUser) {
+                    this.showToast('Please login to create a post', 'error');
+                    this.showLogin();
+                    return;
+                }
+
+                const title = document.getElementById('challengeTitle').value;
+                const game = document.getElementById('challengeGame').value;
+                const entryFee = parseInt(document.getElementById('challengeEntryFee').value);
+                const difficulty = document.getElementById('challengeDifficulty').value;
+                const description = document.getElementById('challengeDescription').value;
+
+                if (!title || !game || !entryFee || !description) {
+                    this.showToast('Please fill all fields', 'error');
+                    return;
+                }
+
+                if (entryFee > this.currentUser.balance) {
+                    this.showToast('Insufficient balance', 'error');
+                    return;
+                }
+
+                // Create transaction for entry fee
+                this.db.createTransaction({
+                    userId: this.currentUser.id,
+                    amount: entryFee,
+                    type: 'game_entry',
+                    description: `Created challenge: ${title}`
+                });
+
+                const post = this.db.createPost({
+                    userId: this.currentUser.id,
+                    author: this.currentUser.username,
+                    content: `🎮 New challenge: ${title} - ${description}`,
+                    game,
+                    entryFee,
+                    difficulty
+                });
+
+                this.postOffset = 0;
+                this.renderFeed();
+                this.closeModal('createModal');
+                this.showToast('Challenge created! Escrow locked', 'success');
+                
+                // Clear form
+                document.getElementById('challengeTitle').value = '';
+                document.getElementById('challengeDescription').value = '';
+            }
+
+            likePost(postId) {
+                if (!this.currentUser) {
+                    this.showLogin();
+                    return;
+                }
+
+                const post = this.db.likePost(postId, this.currentUser.id);
+                if (post) {
+                    document.getElementById(`likes-${postId}`).textContent = post.likes;
+                    this.showToast('Post liked!');
+                }
+            }
+
+            commentPost(postId) {
+                if (!this.currentUser) {
+                    this.showLogin();
+                    return;
+                }
+
+                const comment = prompt('Enter your comment:');
+                if (comment) {
+                    this.showToast('Comment added!');
+                }
+            }
+
+            sharePost(postId) {
+                this.showToast('Post shared to your timeline!');
+            }
+
+            joinChallenge(postId) {
+                if (!this.currentUser) {
+                    this.showLogin();
+                    return;
+                }
+
+                const post = this.db.posts.get(postId);
+                if (!post) return;
+
+                if (post.entryFee > this.currentUser.balance) {
+                    this.showToast('Insufficient balance to join', 'error');
+                    return;
+                }
+
+                // Create transaction
+                this.db.createTransaction({
+                    userId: this.currentUser.id,
+                    amount: post.entryFee,
+                    type: 'game_entry',
+                    description: `Joined challenge: ${post.content.substring(0, 50)}`
+                });
+
+                // Add to game queue
+                const game = this.gameEngine.addToQueue(this.currentUser);
+                if (game) {
+                    this.showToast('Match found! Redirecting to arena...', 'success');
+                    setTimeout(() => {
+                        this.navigate('arena');
+                        this.startGame(game.id);
+                    }, 2000);
+                } else {
+                    this.showToast('Added to matchmaking queue...', 'info');
+                }
+            }
+
+            // ============ ARENA ============
+            updateArena() {
+                if (!this.currentUser) {
+                    this.showToast('Please login to access arena', 'error');
+                    return;
+                }
+
+                // Update player names
+                document.getElementById('player1Name').textContent = this.currentUser.username;
+                document.getElementById('player1Avatar').textContent = this.currentUser.username[0].toUpperCase();
+                
+                // Find opponent from queue or random
+                const opponent = Array.from(this.db.users.values())
+                    .find(u => u.id !== this.currentUser.id);
+                
+                if (opponent) {
+                    document.getElementById('player2Name').textContent = opponent.username;
+                    document.getElementById('player2Avatar').textContent = opponent.username[0].toUpperCase();
+                }
+            }
+
+            startGame() {
+                if (!this.currentUser) {
+                    this.showLogin();
+                    return;
+                }
+
+                const game = this.gameEngine.createGame(
+                    this.currentUser,
+                    { id: '2', username: 'GameMaster' },
+                    10
+                );
+
+                this.gameEngine.startGame(game.id);
+                document.getElementById('startGameBtn').disabled = true;
+                document.getElementById('playRoundBtn').disabled = false;
+                this.showToast('Game started! Good luck!', 'success');
+            }
+
+            playRound() {
+                if (!this.currentUser) return;
+
+                const game = this.gameEngine.playRound('game1', this.currentUser.id);
+                if (game) {
+                    document.getElementById('scoreA').textContent = game.score1;
+                    document.getElementById('scoreB').textContent = game.score2;
+
+                    if (game.status === 'finished') {
+                        document.getElementById('playRoundBtn').disabled = true;
+                        document.getElementById('startGameBtn').disabled = false;
+                        
+                        const winner = game.winner.id === this.currentUser.id ? 'You win!' : 'You lose!';
+                        this.showToast(winner, game.winner.id === this.currentUser.id ? 'success' : 'error');
+                        
+                        // Update balance
+                        this.currentUser = this.db.getUser(this.currentUser.id);
+                        document.getElementById('walletBalance').textContent = `${this.currentUser.balance} THB`;
+                    }
+                }
+            }
+
+            watchGame() {
+                this.showToast('Entering spectator mode...');
+            }
+
+            // ============ TOURNAMENTS ============
+            renderTournaments() {
+                const container = document.getElementById('tournamentsList');
+                const tournaments = this.db.getActiveTournaments();
+                
+                if (tournaments.length === 0) {
+                    container.innerHTML = '<p>No active tournaments</p>';
+                    return;
+                }
+
+                let html = '';
+                tournaments.forEach(tournament => {
+                    html += `
+                        <div class="leaderboard-item">
+                            <div class="rank">🏆</div>
+                            <div class="player-info">
+                                <div class="player-name">${tournament.name}</div>
+                                <div class="player-points">Entry: ${tournament.entryFee} THB · Prize: ${tournament.prize} THB · ${tournament.participants}/${tournament.maxParticipants} players</div>
+                            </div>
+                            <button class="btn" style="padding: 0.5rem 1rem;" onclick="app.joinTournament('${tournament.id}')" ${tournament.participants >= tournament.maxParticipants ? 'disabled' : ''}>
+                                ${tournament.participants >= tournament.maxParticipants ? 'Full' : 'Join'}
+                            </button>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+                // Update bracket
+                this.renderTournamentBracket();
+            }
+
+            renderTournamentBracket() {
+                const bracket = document.getElementById('tournamentBracket');
+                bracket.innerHTML = `
+                    <div class="bracket-round">
+                        <div class="bracket-match">Quarter Final 1<br><small>ProGamer vs Player2</small></div>
+                        <div class="bracket-match">Quarter Final 2<br><small>GameMaster vs Player4</small></div>
+                    </div>
+                    <div class="bracket-round">
+                        <div class="bracket-match">Semi Final 1<br><small>Winner QF1 vs Winner QF2</small></div>
+                        <div class="bracket-match">Semi Final 2<br><small>TBD</small></div>
+                    </div>
+                    <div class="bracket-round">
+                        <div class="bracket-match">Final<br><small>Winner SF1 vs Winner SF2</small></div>
+                    </div>
+                `;
+            }
+
+            joinTournament(tournamentId) {
+                if (!this.currentUser) {
+                    this.showLogin();
+                    return;
+                }
+
+                const tournament = this.db.tournaments.get(tournamentId);
+                if (!tournament) return;
+
+                if (tournament.entryFee > this.currentUser.balance) {
+                    this.showToast('Insufficient balance', 'error');
+                    return;
+                }
+
+                if (this.db.joinTournament(tournamentId, this.currentUser.id)) {
+                    this.db.createTransaction({
+                        userId: this.currentUser.id,
+                        amount: tournament.entryFee,
+                        type: 'tournament_entry',
+                        description: `Joined ${tournament.name}`
+                    });
+
+                    this.currentUser = this.db.getUser(this.currentUser.id);
+                    document.getElementById('walletBalance').textContent = `${this.currentUser.balance} THB`;
+                    
+                    this.showToast(`Joined ${tournament.name}!`, 'success');
+                    this.renderTournaments();
+                } else {
+                    this.showToast('Tournament is full', 'error');
+                }
+            }
+
+            // ============ LEADERBOARDS ============
+            renderLeaderboards() {
+                const container = document.getElementById('leaderboardsList');
+                
+                // Sort users by XP
+                const users = Array.from(this.db.users.values())
+                    .sort((a, b) => b.xp - a.xp)
+                    .slice(0, 10);
+
+                let html = '';
+                users.forEach((user, index) => {
+                    const rankIcon = index === 0 ? '👑' : index === 1 ? '⭐' : index === 2 ? '🎯' : `${index + 1}`;
+                    html += `
+                        <div class="leaderboard-item">
+                            <div class="rank">${rankIcon}</div>
+                            <div class="avatar small">${user.username[0]}</div>
+                            <div class="player-info">
+                                <div class="player-name">${user.username}</div>
+                                <div class="player-points">Level ${user.level} · ${user.xp} XP</div>
+                            </div>
+                            <div>${user.balance} THB</div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            }
+
+            // ============ SIDEBARS ============
+            updateSidebars() {
+                this.updateLiveStreams();
+                this.updateLeaderboardSidebar();
+                this.updateChat();
+                this.updateAchievements();
+                this.updateBadges();
+            }
+
+            updateLiveStreams() {
+                const container = document.getElementById('liveStreams');
+                const liveCount = document.getElementById('liveCount');
+                
+                const streams = [
+                    { name: 'Speed Chess', viewers: 45 },
+                    { name: 'Reaction Duel', viewers: 32 },
+                    { name: 'Strategy Battle', viewers: 28 }
+                ];
+                
+                liveCount.textContent = streams.length;
+                
+                let html = '';
+                streams.forEach(stream => {
+                    html += `
+                        <div class="sidebar-item" onclick="app.navigate('arena')">
+                            <span class="live-badge">LIVE</span> ${stream.name}
+                            <span style="margin-left: auto;">👁️ ${stream.viewers}</span>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            }
+
+            updateLeaderboardSidebar() {
+                const container = document.getElementById('sidebarLeaderboard');
+                
+                const users = Array.from(this.db.users.values())
+                    .sort((a, b) => b.xp - a.xp)
+                    .slice(0, 5);
+
+                let html = '';
+                users.forEach((user, index) => {
+                    html += `
+                        <div class="leaderboard-item">
+                            <span class="rank">${index + 1}</span>
+                            <span>${user.username}</span>
+                            <span style="margin-left: auto;">${user.xp}</span>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            }
+
+            updateChat() {
+                const container = document.getElementById('chatMessages');
+                const messages = this.ws.getMessageHistory().slice(-10);
+                
+                let html = '';
+                messages.forEach(msg => {
+                    html += `<div class="chat-message"><b>${msg.user}:</b> ${msg.message}</div>`;
+                });
+                
+                container.innerHTML = html;
+                container.scrollTop = container.scrollHeight;
+            }
+
+            updateAchievements() {
+                const container = document.getElementById('achievementsList');
+                
+                const achievements = Array.from(this.db.achievements.values()).slice(0, 3);
+                
+                let html = '';
+                achievements.forEach(achievement => {
+                    const unlocked = this.currentUser?.achievements.includes(achievement.id);
+                    html += `
+                        <div class="badge-item" style="opacity: ${unlocked ? 1 : 0.5};">
+                            <div class="badge-icon">${achievement.icon}</div>
+                            <div class="badge-name">${achievement.name}</div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            }
+
+            updateBadges() {
+                if (this.currentUser) {
+                    document.getElementById('friendsBadge').textContent = this.currentUser.friends?.length || 0;
+                    document.getElementById('messagesBadge').textContent = Math.floor(Math.random() * 5);
+                }
+            }
+
+            // ============ CHAT ============
+            sendChat() {
+                const input = document.getElementById('chatInput');
+                const message = input.value.trim();
+                
+                if (!message) return;
+                
+                if (!this.currentUser) {
+                    this.showToast('Please login to chat', 'error');
+                    return;
+                }
+
+                this.ws.addChatMessage(this.currentUser.username, message);
+                input.value = '';
+                this.updateChat();
+            }
+
+            handleChatKeypress(e) {
+                if (e.key === 'Enter') {
+                    this.sendChat();
+                }
+            }
+
+            displayChatMessage(message) {
+                const container = document.getElementById('chatMessages');
+                container.innerHTML += `<div class="chat-message"><b>${message.user}:</b> ${message.message}</div>`;
+                container.scrollTop = container.scrollHeight;
+            }
+
+            // ============ WALLET ============
+            showDeposit() {
+                if (!this.currentUser) {
+                    this.showLogin();
+                    return;
+                }
+                document.getElementById('depositModal').classList.add('active');
+            }
+
+            processDeposit() {
+                const amount = parseInt(document.getElementById('depositAmount').value);
+                const method = document.getElementById('paymentMethod').value;
+
+                if (!amount || amount < 100) {
+                    this.showToast('Minimum deposit is 100 THB', 'error');
+                    return;
+                }
+
+                this.db.createTransaction({
+                    userId: this.currentUser.id,
+                    amount,
+                    type: 'deposit',
+                    description: `Deposit via ${method}`
+                });
+
+                this.currentUser = this.db.getUser(this.currentUser.id);
+                document.getElementById('walletBalance').textContent = `${this.currentUser.balance} THB`;
+                
+                this.closeModal('depositModal');
+                this.showToast(`Deposited ${amount} THB successfully!`, 'success');
+            }
+
+            // ============ SEARCH ============
+            search(query) {
+                if (!query || query.length < 2) return;
+
+                const results = [];
+                
+                // Search users
+                this.db.users.forEach(user => {
+                    if (user.username.toLowerCase().includes(query.toLowerCase())) {
+                        results.push({ type: 'user', name: user.username });
+                    }
+                });
+
+                // Search games
+                this.db.games.forEach(game => {
+                    if (game.name?.toLowerCase().includes(query.toLowerCase())) {
+                        results.push({ type: 'game', name: game.name });
+                    }
+                });
+
+                if (results.length > 0) {
+                    this.showToast(`Found ${results.length} results`, 'info');
+                }
+            }
+
+            // ============ UTILITIES ============
+            formatTime(timestamp) {
+                const seconds = Math.floor((Date.now() - timestamp) / 1000);
+                
+                if (seconds < 60) return 'just now';
+                if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+                if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+                return `${Math.floor(seconds / 86400)}d ago`;
+            }
+
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                
+                const icons = {
+                    success: 'fa-check-circle',
+                    error: 'fa-exclamation-circle',
+                    info: 'fa-info-circle'
+                };
+                
+                const colors = {
+                    success: 'var(--success)',
+                    error: 'var(--danger)',
+                    info: 'var(--accent)'
+                };
+                
+                toast.innerHTML = `
+                    <i class="fas ${icons[type]}" style="color: ${colors[type]};"></i>
+                    <span>${message}</span>
+                `;
+                
+                container.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.animation = 'slideIn 0.3s ease reverse';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            toggleUserMenu() {
+                document.getElementById('userDropdown').classList.toggle('show');
+            }
+
+            closeModal(id) {
+                document.getElementById(id).classList.remove('active');
+            }
+
+            openCreateModal() {
+                if (!this.currentUser) {
+                    this.showLogin();
+                    return;
+                }
+                document.getElementById('createModal').classList.add('active');
+            }
+
+            // ============ THEME ============
+            setTheme(color) {
+                const root = document.documentElement;
+                const themes = {
+                    blue: '#3b82f6',
+                    red: '#ef4444',
+                    green: '#10b981',
+                    purple: '#8b5cf6',
+                    orange: '#f97316'
+                };
+                root.style.setProperty('--accent', themes[color]);
+                root.style.setProperty('--accent-dark', this.adjustColor(themes[color], -20));
+                root.style.setProperty('--accent-glow', this.adjustColor(themes[color], 20));
+                this.showToast(`Theme updated to ${color}`);
+            }
+
+            adjustColor(hex, percent) {
+                // Simple color adjustment for demo
+                return hex;
+            }
+
+            toggleDarkMode() {
+                document.body.classList.toggle('dark');
+                this.darkMode = !this.darkMode;
+                this.showToast(this.darkMode ? 'Dark mode enabled' : 'Light mode enabled');
+            }
+
+            showLanguageSelector() {
+                const languages = ['English', 'Spanish', 'French', 'German', 'Japanese'];
+                const current = document.getElementById('currentLanguage').textContent;
+                const newLang = prompt(`Select language (${languages.join(', ')})`, current);
+                if (newLang && languages.includes(newLang)) {
+                    document.getElementById('currentLanguage').textContent = newLang;
+                    this.showToast(`Language changed to ${newLang}`);
+                }
+            }
+
+            // ============ NOTIFICATIONS ============
+            showNotifications() {
+                this.showToast('You have 3 new notifications');
+            }
+
+            showMessages() {
+                this.showToast('Opening messages');
+            }
+
+            showProfile() {
+                if (!this.currentUser) {
+                    this.showLogin();
+                    return;
+                }
+                this.showToast(`Profile: ${this.currentUser.username} (Level ${this.currentUser.level})`);
+                document.getElementById('userDropdown').classList.remove('show');
+            }
+
+            showWallet() {
+                if (!this.currentUser) {
+                    this.showLogin();
+                    return;
+                }
+                this.showToast(`Balance: ${this.currentUser.balance} THB`);
+                document.getElementById('userDropdown').classList.remove('show');
+            }
+
+            showSettings() {
+                this.showToast('Settings panel');
+                document.getElementById('userDropdown').classList.remove('show');
+            }
+
+            showAchievements() {
+                if (!this.currentUser) {
+                    this.showLogin();
+                    return;
+                }
+                const count = this.currentUser.achievements?.length || 0;
+                this.showToast(`Achievements unlocked: ${count}`);
+                document.getElementById('userDropdown').classList.remove('show');
+            }
+
+            // ============ SIDEBAR ACTIONS ============
+            showFriends() { 
+                if (!this.currentUser) {
+                    this.showLogin();
+                    return;
+                }
+                this.showToast(`Friends list - ${this.currentUser.friends?.length || 0} online`); 
+            }
+            
+            showGroups() { this.showToast('Your groups'); }
+            showEvents() { this.showToast('Upcoming events'); }
+            showChallenges() { this.showToast('Active challenges'); }
+            showBusiness() { this.showToast('Business suite - Create page'); }
+            showAds() { this.showToast('Ad manager - Campaigns'); }
+            showAnalytics() { this.showToast('Analytics dashboard'); }
+            openAI() { this.showToast('Wiki AI: Ask me anything'); }
+            openAd() { window.open('https://example.com', '_blank'); }
+
+            // ============ DONATIONS ============
+            showDonation() {
+                if (!this.currentUser) {
+                    this.showLogin();
+                    return;
+                }
+                document.getElementById('donationModal').classList.add('active');
+            }
+
+            donate() {
+                const amount = parseInt(document.getElementById('donateAmount').value);
+                const message = document.getElementById('donateMessage').value;
+                
+                if (!amount || amount < 10) {
+                    this.showToast('Minimum donation is 10 THB', 'error');
+                    return;
+                }
+
+                if (amount > this.currentUser.balance) {
+                    this.showToast('Insufficient balance', 'error');
+                    return;
+                }
+
+                this.db.createTransaction({
+                    userId: this.currentUser.id,
+                    amount,
+                    type: 'donation',
+                    description: message || 'Donation'
+                });
+
+                this.currentUser = this.db.getUser(this.currentUser.id);
+                document.getElementById('walletBalance').textContent = `${this.currentUser.balance} THB`;
+                
+                this.closeModal('donationModal');
+                this.showToast(`Donated ${amount} THB! Thank you`, 'success');
+            }
+
+            // ============ FOOTER ACTIONS ============
+            showSponsor() { this.showToast('Sponsorship options'); }
+            showHelp() { this.showToast('Help center'); }
+            showTerms() { this.showToast('Terms of service'); }
+            showPrivacy() { this.showToast('Privacy policy'); }
+            showAbout() { this.showToast('About ThumbsApp'); }
+            showAgeVerification() { this.showToast('Age verification required: 18+'); }
+            showCompliance() { this.showToast('Geo-compliance active'); }
+            showResponsible() { this.showToast('Responsible gaming tools'); }
+            showForgotPassword() {
+                const email = prompt('Enter your email to reset password');
+                if (email) {
+                    setTimeout(() => {
+                        this.showToast('Password reset link sent!', 'success');
+                    }, 1000);
+                }
+            }
+
+            // ============ GAME DISPLAY UPDATES ============
+            updateGameDisplay(games) {
+                // Update game displays in real-time
+                if (games && games.length > 0) {
+                    const game = games[0];
+                    document.getElementById('scoreA').textContent = game.score1;
+                    document.getElementById('scoreB').textContent = game.score2;
+                }
+            }
+
+            updateViewerCounts(counts) {
+                document.getElementById('viewerCount').textContent = counts.arena;
+            }
+        }
+
+        // Initialize the application
+        const app = new ThumbsApp();
+        window.app = app;
+    </script>
+</body>
+</html>
