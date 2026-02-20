@@ -1,921 +1,2529 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>ThumbsApp · GETTR‑style restructure · original identity</title>
-  <!-- Google Fonts (Inter, Space Grotesk) & Font Awesome -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    /* ---------- RESET & VARIABLES (ThumbsApp identity, no gettr colors) ---------- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      /* ThumbsApp unique palette – not copying gettr, but modern */
-      --bg-body: #f4f6fa;
-      --bg-surface: #ffffff;
-      --bg-sidebar: #ffffff;
-      --text-primary: #14171a;
-      --text-secondary: #5b6775;
-      --accent-blue: #2c7be5;
-      --accent-green: #1db954;
-      --accent-purple: #7c4dff;
-      --border-light: #eaeef2;
-      --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.05);
-      --radius-card: 20px;
-      --radius-btn: 30px;
-      --header-height: 0px; /* no top header – left sidebar is fixed */
-      --transition: all 0.15s ease;
-    }
-
-    .dark {
-      --bg-body: #0b0e12;
-      --bg-surface: #1a1d21;
-      --bg-sidebar: #1a1d21;
-      --text-primary: #eef2f5;
-      --text-secondary: #9aa9b8;
-      --border-light: #2c333a;
-      --shadow-sm: 0 2px 8px rgba(0,0,0,0.6);
-    }
-
-    body {
-      font-family: 'Inter', -apple-system, system-ui, sans-serif;
-      background: var(--bg-body);
-      color: var(--text-primary);
-      line-height: 1.5;
-      transition: background-color 0.2s, color 0.2s;
-      min-height: 100vh;
-    }
-
-    /* ---------- THREE‑COLUMN GETTR‑LIKE STRUCTURE ---------- */
-    .gettr-layout {
-      display: grid;
-      grid-template-columns: 300px 1fr 340px;
-      max-width: 1420px;
-      margin: 0 auto;
-      padding: 0 20px;
-      gap: 24px;
-      min-height: 100vh;
-    }
-
-    /* ----- LEFT SIDEBAR (fixed, scroll‑independent, ThumbsApp identity) ----- */
-    .left-rail {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
-      background: var(--bg-sidebar);
-      border-right: 1px solid var(--border-light);
-      padding: 24px 16px;
-      display: flex;
-      flex-direction: column;
-      scrollbar-width: thin;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .left-rail::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    /* ThumbsApp logo (original) */
-    .logo-thumbs {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      margin-bottom: 28px;
-      padding-left: 12px;
-      background: linear-gradient(145deg, var(--accent-blue), var(--accent-purple));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      display: inline-block;
-    }
-
-    /* profile summary (left rail) */
-    .profile-mini {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 12px 20px 12px;
-      border-bottom: 1px solid var(--border-light);
-      margin-bottom: 20px;
-    }
-
-    .avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, var(--accent-blue), var(--accent-purple));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 600;
-      font-size: 1.4rem;
-      flex-shrink: 0;
-      background-size: cover;
-    }
-
-    .profile-mini .info h4 {
-      font-size: 1rem;
-      font-weight: 700;
-    }
-
-    .profile-mini .info span {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-    }
-
-    /* navigation menu (exactly gettr style: vertical, icons + text) */
-    .nav-menu-vertical {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 28px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      padding: 12px 16px;
-      border-radius: 40px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      color: var(--text-primary);
-      transition: var(--transition);
-      cursor: pointer;
-    }
-
-    .nav-item i {
-      font-size: 1.4rem;
-      width: 28px;
-      color: var(--text-secondary);
-    }
-
-    .nav-item:hover {
-      background: rgba(44, 123, 229, 0.08);
-    }
-
-    .nav-item.active {
-      color: var(--accent-blue);
-    }
-
-    .nav-item.active i {
-      color: var(--accent-blue);
-    }
-
-    /* create post button (like gettr +) */
-    .create-post-btn {
-      background: var(--accent-blue);
-      color: white;
-      border: none;
-      border-radius: 40px;
-      padding: 14px 24px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin: 16px 0 24px 0;
-      cursor: pointer;
-      transition: var(--transition);
-      box-shadow: 0 6px 14px rgba(44,123,229,0.3);
-    }
-
-    .create-post-btn:hover {
-      background: #1a5cb0;
-      transform: scale(1.02);
-    }
-
-    /* left footer / settings etc */
-    .left-footer {
-      margin-top: auto;
-      padding-top: 20px;
-      border-top: 1px solid var(--border-light);
-      font-size: 0.9rem;
-    }
-
-    .left-footer .nav-item {
-      font-size: 0.95rem;
-      padding: 10px 12px;
-    }
-
-    /* ----- MAIN FEED (center column) ----- */
-    .main-feed {
-      padding: 24px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    /* post creation box (like gettr's composer) */
-    .composer-card {
-      background: var(--bg-surface);
-      border-radius: var(--radius-card);
-      border: 1px solid var(--border-light);
-      padding: 20px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .composer-row {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-    }
-
-    .composer-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, var(--accent-blue), var(--accent-purple));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 600;
-      flex-shrink: 0;
-    }
-
-    .composer-input {
-      flex: 1;
-      background: var(--bg-body);
-      border: 1px solid var(--border-light);
-      border-radius: 30px;
-      padding: 14px 18px;
-      font-size: 1rem;
-      color: var(--text-primary);
-      outline: none;
-    }
-
-    .composer-input:focus {
-      border-color: var(--accent-blue);
-    }
-
-    .composer-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 20px;
-      margin-top: 16px;
-      padding-left: 64px;
-    }
-
-    .media-btn {
-      background: transparent;
-      border: none;
-      color: var(--accent-blue);
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      padding: 8px 16px;
-      border-radius: 30px;
-    }
-
-    .media-btn:hover {
-      background: rgba(44,123,229,0.08);
-    }
-
-    .post-btn {
-      background: var(--accent-blue);
-      border: none;
-      color: white;
-      font-weight: 600;
-      padding: 8px 28px;
-      border-radius: 30px;
-      cursor: pointer;
-      font-size: 0.95rem;
-    }
-
-    /* feed post cards */
-    .post-card {
-      background: var(--bg-surface);
-      border-radius: var(--radius-card);
-      border: 1px solid var(--border-light);
-      padding: 22px;
-      box-shadow: var(--shadow-sm);
-      transition: var(--transition);
-    }
-
-    .post-header {
-      display: flex;
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-
-    .post-author-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: var(--accent-purple);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 600;
-      flex-shrink: 0;
-    }
-
-    .post-author h4 {
-      font-weight: 700;
-      font-size: 1rem;
-    }
-
-    .post-author span {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-    }
-
-    .post-content {
-      margin-bottom: 16px;
-      font-size: 1rem;
-    }
-
-    /* media placeholder */
-    .post-media {
-      background: var(--bg-body);
-      border-radius: 18px;
-      height: 200px;
-      margin: 14px 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-secondary);
-      border: 1px dashed var(--border-light);
-    }
-
-    .post-stats {
-      display: flex;
-      gap: 24px;
-      margin: 16px 0 8px;
-    }
-
-    .stat {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
-
-    .post-actions-row {
-      display: flex;
-      gap: 12px;
-      border-top: 1px solid var(--border-light);
-      padding-top: 16px;
-      margin-top: 8px;
-    }
-
-    .action-btn {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: transparent;
-      border: none;
-      padding: 10px;
-      border-radius: 40px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      cursor: pointer;
-    }
-
-    .action-btn:hover {
-      background: rgba(44,123,229,0.06);
-      color: var(--accent-blue);
-    }
-
-    /* load more */
-    .load-more {
-      text-align: center;
-      padding: 20px;
-      color: var(--accent-blue);
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    /* ----- RIGHT SIDEBAR (Universal News / Trending – GETTR style) ----- */
-    .right-rail {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
-      background: var(--bg-surface);
-      border-left: 1px solid var(--border-light);
-      padding: 24px 20px;
-      scrollbar-width: thin;
-    }
-
-    /* category tabs */
-    .trending-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid var(--border-light);
-      padding-bottom: 12px;
-    }
-
-    .tab {
-      padding: 6px 16px;
-      border-radius: 40px;
-      background: var(--bg-body);
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .tab.active {
-      background: var(--accent-blue);
-      color: white;
-    }
-
-    /* news card (ranked / gettr style) */
-    .news-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .news-card {
-      background: var(--bg-body);
-      border-radius: 16px;
-      padding: 16px;
-      border: 1px solid var(--border-light);
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .news-card:hover {
-      background: var(--bg-surface);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .news-rank {
-      font-weight: 700;
-      color: var(--accent-blue);
-      font-size: 1.2rem;
-      margin-right: 12px;
-    }
-
-    .news-title {
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .news-meta {
-      display: flex;
-      gap: 16px;
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
-
-    .hashtags {
-      margin-top: 8px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .hashtag {
-      background: rgba(44,123,229,0.1);
-      padding: 4px 12px;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      color: var(--accent-blue);
-      font-weight: 500;
-    }
-
-    /* AI Wiki section (compact, integrated in right rail) */
-    .wiki-ai-card {
-      margin-top: 32px;
-      background: var(--bg-body);
-      border-radius: 20px;
-      padding: 20px;
-      border: 1px solid var(--border-light);
-    }
-
-    .wiki-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-      font-weight: 700;
-    }
-
-    .wiki-messages {
-      background: var(--bg-surface);
-      border-radius: 16px;
-      padding: 12px;
-      height: 140px;
-      overflow-y: auto;
-      margin-bottom: 12px;
-      font-size: 0.9rem;
-    }
-
-    .wiki-input-area {
-      display: flex;
-      gap: 10px;
-    }
-
-    .wiki-input-area input {
-      flex: 1;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-light);
-      border-radius: 40px;
-      padding: 10px 16px;
-      outline: none;
-      color: var(--text-primary);
-    }
-
-    .wiki-input-area button {
-      background: var(--accent-blue);
-      border: none;
-      border-radius: 40px;
-      padding: 0 18px;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* utility */
-    .spinner {
-      border: 3px solid var(--border-light);
-      border-top-color: var(--accent-blue);
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      animation: spin 0.8s linear infinite;
-      margin: 20px auto;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* dark mode toggle (simple) */
-    .dark-toggle {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* responsive */
-    @media (max-width: 1100px) {
-      .gettr-layout {
-        grid-template-columns: 280px 1fr 300px;
-      }
-    }
-
-    @media (max-width: 900px) {
-      .gettr-layout {
-        grid-template-columns: 1fr;
-      }
-      .left-rail,
-      .right-rail {
-        display: none;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThumbsApp - Gaming Community</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --primary-dark: #5a4bd1;
+            --secondary-color: #00cec9;
+            --dark-bg: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --card-hover: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: #2a2a2a;
+            --success-color: #00b894;
+            --danger-color: #d63031;
+            --warning-color: #fdcb6e;
+            --gradient-1: linear-gradient(135deg, #6c5ce7 0%, #a363d9 100%);
+            --gradient-2: linear-gradient(135deg, #00cec9 0%, #81ecec 100%);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 8px 15px rgba(108, 92, 231, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.8rem 0;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .nav-center {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 2rem;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.8rem;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .icon-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .icon-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            min-width: 18px;
+        }
+
+        .user-menu {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.3rem;
+            border-radius: 30px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        .user-menu img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-menu i {
+            color: var(--text-secondary);
+            margin-right: 0.5rem;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 200px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .user-menu:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: var(--card-hover);
+        }
+
+        .dropdown-menu a:first-child {
+            border-radius: 12px 12px 0 0;
+        }
+
+        .dropdown-menu a:last-child {
+            border-radius: 0 0 12px 12px;
+        }
+
+        .dropdown-menu .divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 0.5rem 0;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--primary-color);
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            padding: 2rem 0;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-header h2 i {
+            color: var(--primary-color);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.1) 0%, rgba(0, 206, 201, 0.1) 100%);
+            border-radius: 30px;
+            padding: 4rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Games Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .game-card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid var(--border-color);
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-color);
+        }
+
+        .game-thumbnail {
+            position: relative;
+            height: 150px;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .game-info {
+            padding: 1.5rem;
+        }
+
+        .game-info h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .game-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .difficulty.easy {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .difficulty.medium {
+            background-color: var(--warning-color);
+            color: var(--dark-bg);
+        }
+
+        .difficulty.hard {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .play-count {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .play-count i {
+            margin-right: 0.3rem;
+        }
+
+        .play-now-btn {
+            width: 100%;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .play-now-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Tournaments Grid */
+        .tournaments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .tournament-card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .tournament-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .tournament-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .tournament-header h3 {
+            font-size: 1.3rem;
+        }
+
+        .prize-pool {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .tournament-info {
+            margin: 1rem 0;
+            color: var(--text-secondary);
+        }
+
+        .tournament-info p {
+            margin-bottom: 0.5rem;
+        }
+
+        .tournament-info i {
+            width: 20px;
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .tournament-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .registered {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .register-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .register-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .register-btn.full {
+            background-color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        /* News Grid */
+        .news-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .news-tab {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .news-tab:hover,
+        .news-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .news-card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .news-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .news-image {
+            height: 180px;
+            background: var(--gradient-1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .news-source {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .news-content {
+            padding: 1.5rem;
+        }
+
+        .news-content h4 {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .news-content p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .read-more {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Social Feed */
+        .feed-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .feed-post {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .post-user-info h4 {
+            margin-bottom: 0.2rem;
+        }
+
+        .post-user-info span {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .post-time {
+            margin-left: auto;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .post-content {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .post-media {
+            margin: 1rem 0;
+            border-radius: 15px;
+            overflow: hidden;
+            max-height: 400px;
+        }
+
+        .post-media img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 2rem;
+            padding: 0.5rem 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+        .post-stats span {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .post-action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .post-action-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .post-action-btn.liked {
+            color: var(--danger-color);
+        }
+
+        .load-more {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        /* Game Player Section */
+        .game-player-section {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .game-player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .game-player-header h2 {
+            font-size: 2rem;
+        }
+
+        .game-player-container {
+            width: 100%;
+            min-height: 600px;
+            background-color: var(--dark-bg);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .game-player-container iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        .back-to-games {
+            margin-top: 1rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            border-radius: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background-color: var(--card-hover);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .checkbox input {
+            width: auto;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .form-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Image Preview */
+        .image-preview {
+            margin-top: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 200px;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Post Modal */
+        #postContent {
+            width: 100%;
+            background-color: var(--card-hover);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            color: var(--text-primary);
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+
+        .post-options {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        #postPrivacy {
+            background-color: var(--card-hover);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification-success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .notification-error {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .notification-info {
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .notification.fade-out {
+            animation: fadeOut 0.3s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .footer-section p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 0.5rem;
+            z-index: 999;
+            justify-content: space-around;
+        }
+
+        .mobile-menu a {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu a i {
+            font-size: 1.2rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .mobile-menu a.active {
+            color: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu {
+                display: flex;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-stats {
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-center {
+                display: none;
+            }
+            
+            .nav-right {
+                gap: 0.8rem;
+            }
+            
+            .hero-section {
+                padding: 2rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-content p {
+                font-size: 1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .news-tabs {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .games-grid,
+            .tournaments-grid,
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="gettr-layout">
-    <!-- LEFT SIDEBAR (fixed, scroll independent, ThumbsApp identity) -->
-    <aside class="left-rail">
-      <div class="logo-thumbs">ThumbsApp</div>
-
-      <!-- Profile section (original) -->
-      <div class="profile-mini">
-        <div class="avatar" id="leftAvatar">P</div>
-        <div class="info">
-          <h4 id="leftUserName">ProGamer</h4>
-          <span>@progamer · 2.4K followers</span>
-        </div>
-      </div>
-
-      <!-- Navigation links (GETTR style vertical) -->
-      <div class="nav-menu-vertical">
-        <div class="nav-item active" onclick="app.navigate('home')"><i class="fas fa-home"></i> Home</div>
-        <div class="nav-item" onclick="app.navigate('explore')"><i class="fas fa-hashtag"></i> Explore</div>
-        <div class="nav-item" onclick="app.showNotif()"><i class="fas fa-bell"></i> Notifications</div>
-        <div class="nav-item" onclick="app.showMessages()"><i class="fas fa-envelope"></i> Messages</div>
-        <div class="nav-item" onclick="app.showSaved()"><i class="fas fa-bookmark"></i> Saved</div>
-        <div class="nav-item" onclick="app.showSettings()"><i class="fas fa-cog"></i> Settings</div>
-      </div>
-
-      <!-- Post/Create button (big) -->
-      <button class="create-post-btn" onclick="app.openCreateModal()"><i class="fas fa-plus-circle"></i> Post</button>
-
-      <!-- extra footer items (light/dark, logout) -->
-      <div class="left-footer">
-        <div class="nav-item dark-toggle" onclick="app.toggleDarkMode()"><i class="fas fa-moon"></i> Dark mode</div>
-        <div class="nav-item" onclick="app.logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
-      </div>
-    </aside>
-
-    <!-- MAIN FEED (center column) -->
-    <main class="main-feed" id="mainFeed">
-      <!-- post creation box at top -->
-      <div class="composer-card">
-        <div class="composer-row">
-          <div class="composer-avatar" id="composerAvatar">P</div>
-          <input type="text" class="composer-input" placeholder="What's happening? Share a challenge..." id="postInputField" onclick="app.openCreateModal()">
-        </div>
-        <div class="composer-actions">
-          <label class="media-btn"><i class="fas fa-image"></i> Media</label>
-          <button class="post-btn" onclick="app.quickPost()">Post</button>
-        </div>
-      </div>
-
-      <!-- dynamic feed posts -->
-      <div id="feedPostsContainer">
-        <!-- posts will be injected via JS -->
-        <div class="spinner"></div>
-      </div>
-      <div class="load-more" onclick="app.loadMorePosts()" id="loadMoreBtn">Load more posts ↓</div>
-    </main>
-
-    <!-- RIGHT SIDEBAR (Universal News / Wiki AI) -->
-    <aside class="right-rail">
-      <!-- category tabs like GETTR -->
-      <div class="trending-tabs">
-        <span class="tab active" data-tab="trending">Trending</span>
-        <span class="tab" data-tab="tech">Tech</span>
-        <span class="tab" data-tab="sports">Sports</span>
-        <span class="tab" data-tab="world">World</span>
-      </div>
-
-      <!-- Trending news list (GETTR style compact) -->
-      <div class="news-list" id="trendingNewsContainer">
-        <!-- dynamic -->
-      </div>
-
-      <!-- WIKI AI SECTION (fully functional, GETTR right rail integrated) -->
-      <div class="wiki-ai-card">
-        <div class="wiki-header">
-          <i class="fas fa-robot" style="color: var(--accent-blue);"></i>
-          <span>Thumbs Wiki AI</span>
-        </div>
-        <div class="wiki-messages" id="wikiMessages">
-          <div><strong>AI:</strong> Ask me anything about gaming, strategies...</div>
-        </div>
-        <div class="wiki-input-area">
-          <input type="text" id="wikiInput" placeholder="e.g., reaction duel tips">
-          <button onclick="app.askWiki()"><i class="fas fa-paper-plane"></i></button>
-        </div>
-      </div>
-
-      <!-- extra hashtags preview -->
-      <div style="margin-top: 20px;">
-        <div class="hashtags">
-          <span class="hashtag">#ThumbsCup</span>
-          <span class="hashtag">#ReactionDuel</span>
-          <span class="hashtag">#SpeedChess</span>
-        </div>
-      </div>
-    </aside>
-  </div>
-
-  <!-- SIMPLE MODAL for creating post (GETTR style not heavy) -->
-  <div id="createModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 2000;">
-    <div style="background: var(--bg-surface); border-radius: 30px; max-width: 500px; width: 90%; padding: 2rem;">
-      <h3 style="margin-bottom: 1rem;">Create challenge</h3>
-      <input type="text" id="modalPostTitle" placeholder="Title" style="width:100%; padding:14px; border-radius:40px; border:1px solid var(--border-light); margin-bottom:1rem;">
-      <input type="number" id="modalEntryFee" value="10" style="width:100%; padding:14px; border-radius:40px;">
-      <div style="display:flex; gap:1rem; margin-top:2rem;">
-        <button class="post-btn" onclick="app.createPostFromModal()">Publish</button>
-        <button class="post-btn" style="background:transparent; color:var(--text-secondary);" onclick="app.closeModal()">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TOAST AREA -->
-  <div style="position: fixed; bottom: 20px; right: 20px; z-index: 3000;" id="toastContainer"></div>
-
-  <script>
-    (function() {
-      // ---------- THUMBSAPP CORE (original content, dynamic) ----------
-      class ThumbsApp {
-        constructor() {
-          this.currentUser = { username: 'ProGamer', handle: '@progamer', avatar: 'P', balance: 2450 };
-          this.posts = [
-            { id: 1, author: 'ProGamer', handle: '@progamer', content: 'Just won 100 THB in Reaction Duel! 🔥', media: null, likes: 24, comments: 3, shares: 1, timestamp: Date.now() - 7200000 },
-            { id: 2, author: 'GameMaster', handle: '@gamemaster', content: 'Speed chess tournament starts in 1h. Entry 20 THB.', media: 'video', likes: 45, comments: 12, shares: 7, timestamp: Date.now() - 3600000 },
-            { id: 3, author: 'NoobSlayer', handle: '@noobslayer', content: 'Anyone up for a memory match?', media: null, likes: 8, comments: 2, shares: 0, timestamp: Date.now() - 1800000 }
-          ];
-          this.postOffset = 0;
-          this.pageSize = 3;
-          // trending news (original)
-          this.news = [
-            { rank: 1, title: 'ProGamer wins 10k THB Championship', category: 'Trending', hashtags: ['#esports', '#thumbs'], source: 'Gaming Post', time: '2h' },
-            { rank: 2, title: 'Reaction Duel 2.0 update drops tomorrow', category: 'Tech', hashtags: ['#reactionduel'], source: 'Thumbs Insider', time: '5h' },
-            { rank: 3, title: 'Speed Chess Grandmaster joins Thumbs', category: 'Sports', hashtags: ['#chess'], source: 'SportsWire', time: '7h' },
-            { rank: 4, title: 'Memory Match world record broken', category: 'World', hashtags: ['#memory'], source: 'BBC Gaming', time: '1d' },
-            { rank: 5, title: 'New anti-cheat system deployed', category: 'Tech', hashtags: ['#fairplay'], source: 'TechCrunch', time: '1d' },
-          ];
-          this.wikiChat = [{ role: 'ai', text: 'I can answer gaming questions!' }];
-          this.init();
-        }
-
-        init() {
-          this.renderFeed();
-          this.renderTrendingNews('Trending');
-          this.setupTabs();
-          this.updateLeftProfile();
-        }
-
-        updateLeftProfile() {
-          document.getElementById('leftAvatar').innerText = this.currentUser.avatar;
-          document.getElementById('leftUserName').innerText = this.currentUser.username;
-          document.getElementById('composerAvatar').innerText = this.currentUser.avatar;
-        }
-
-        // feed rendering
-        renderFeed() {
-          let container = document.getElementById('feedPostsContainer');
-          let postsToShow = this.posts.slice(0, this.postOffset + this.pageSize);
-          if (postsToShow.length === 0) {
-            container.innerHTML = '<div class="post-card">No posts yet. Create one!</div>';
-            return;
-          }
-          let html = '';
-          postsToShow.forEach(p => {
-            html += `
-              <div class="post-card">
-                <div class="post-header">
-                  <div class="post-author-avatar">${p.author[0]}</div>
-                  <div class="post-author">
-                    <h4>${p.author} <span style="font-weight:normal;">${p.handle}</span></h4>
-                    <span>${this.formatTime(p.timestamp)}</span>
-                  </div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>ThumbsApp</span>
                 </div>
-                <div class="post-content">${p.content}</div>
-                ${p.media ? '<div class="post-media"><i class="fas fa-play-circle"></i> Media preview (simulated)</div>' : ''}
-                <div class="post-stats">
-                  <span class="stat"><i class="fas fa-heart"></i> ${p.likes}</span>
-                  <span class="stat"><i class="fas fa-comment"></i> ${p.comments}</span>
-                  <span class="stat"><i class="fas fa-retweet"></i> ${p.shares}</span>
+                <div class="nav-links">
+                    <a class="nav-link active" data-section="home">Home</a>
+                    <a class="nav-link" data-section="games">Games</a>
+                    <a class="nav-link" data-section="tournaments">Tournaments</a>
+                    <a class="nav-link" data-section="news">News</a>
+                    <a class="nav-link" data-section="community">Community</a>
                 </div>
-                <div class="post-actions-row">
-                  <button class="action-btn" onclick="app.likePost(${p.id})"><i class="fas fa-heart"></i> Like</button>
-                  <button class="action-btn" onclick="app.commentPost(${p.id})"><i class="fas fa-comment"></i> Comment</button>
-                  <button class="action-btn" onclick="app.sharePost(${p.id})"><i class="fas fa-share"></i> Share</button>
-                </div>
-              </div>
-            `;
-          });
-          container.innerHTML = html;
-        }
-
-        loadMorePosts() {
-          if (this.postOffset + this.pageSize < this.posts.length) {
-            this.postOffset += this.pageSize;
-          } else {
-            this.postOffset = this.posts.length; // no more
-          }
-          this.renderFeed();
-        }
-
-        likePost(id) {
-          let post = this.posts.find(p => p.id === id);
-          if (post) { post.likes++; this.renderFeed(); this.showToast('Liked!'); }
-        }
-
-        commentPost(id) { this.showToast('Comment window (demo)'); }
-        sharePost(id) { this.showToast('Shared (demo)'); }
-
-        quickPost() {
-          this.showToast('Use the create button or modal');
-        }
-
-        openCreateModal() {
-          document.getElementById('createModal').style.display = 'flex';
-        }
-
-        closeModal() {
-          document.getElementById('createModal').style.display = 'none';
-        }
-
-        createPostFromModal() {
-          let title = document.getElementById('modalPostTitle').value.trim();
-          let fee = document.getElementById('modalEntryFee').value;
-          if (!title) title = 'New challenge';
-          let newPost = {
-            id: Date.now(),
-            author: this.currentUser.username,
-            handle: '@' + this.currentUser.username.toLowerCase(),
-            content: `${title} · entry ${fee} THB`,
-            media: null,
-            likes: 0,
-            comments: 0,
-            shares: 0,
-            timestamp: Date.now()
-          };
-          this.posts.unshift(newPost);
-          this.postOffset = 0;
-          this.renderFeed();
-          this.closeModal();
-          this.showToast('Post created');
-        }
-
-        // trending news rendering
-        renderTrendingNews(category = 'Trending') {
-          let filtered = this.news.filter(n => category === 'Trending' ? true : n.category === category);
-          let container = document.getElementById('trendingNewsContainer');
-          container.innerHTML = filtered.map(n => `
-            <div class="news-card" onclick="app.showToast('${n.title}')">
-              <div style="display:flex; align-items:center; gap:12px;">
-                <span class="news-rank">#${n.rank}</span>
-                <div>
-                  <div class="news-title">${n.title}</div>
-                  <div class="news-meta"><span>${n.source}</span> <span>${n.time}</span></div>
-                  <div class="hashtags">${n.hashtags.map(h => `<span class="hashtag">${h}</span>`).join('')}</div>
-                </div>
-              </div>
             </div>
-          `).join('');
+            
+            <div class="nav-center">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="globalSearch" placeholder="Search games, players, tournaments...">
+                </div>
+            </div>
+            
+            <div class="nav-right">
+                <button class="icon-btn" id="notificationsBtn">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </button>
+                <button class="icon-btn" id="messagesBtn">
+                    <i class="fas fa-envelope"></i>
+                    <span class="badge">5</span>
+                </button>
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <img src="https://via.placeholder.com/36" alt="User" id="userAvatar">
+                    <i class="fas fa-chevron-down"></i>
+                    
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#" id="profileLink"><i class="fas fa-user"></i> Profile</a>
+                        <a href="#" id="dashboardLink"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <a href="#" id="settingsLink"><i class="fas fa-cog"></i> Settings</a>
+                        <div class="divider"></div>
+                        <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+                <button class="btn-primary" id="loginBtn">Login</button>
+                <button class="btn-secondary" id="signupBtn">Sign Up</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#" class="mobile-nav-link active" data-section="home"><i class="fas fa-home"></i> Home</a>
+        <a href="#" class="mobile-nav-link" data-section="games"><i class="fas fa-gamepad"></i> Games</a>
+        <a href="#" class="mobile-nav-link" data-section="tournaments"><i class="fas fa-trophy"></i> Tournaments</a>
+        <a href="#" class="mobile-nav-link" data-section="news"><i class="fas fa-newspaper"></i> News</a>
+        <a href="#" class="mobile-nav-link" data-section="community"><i class="fas fa-comments"></i> Community</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Home Section -->
+        <div id="homeSection" class="section active">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1>Welcome to ThumbsApp</h1>
+                    <p>The ultimate gaming community. Play free games, join tournaments, connect with gamers worldwide.</p>
+                    <div class="hero-buttons">
+                        <button class="btn-primary btn-large" id="playNowBtn">
+                            <i class="fas fa-play"></i> Play Now
+                        </button>
+                        <button class="btn-secondary btn-large" id="joinTournamentsBtn">
+                            <i class="fas fa-trophy"></i> Join Tournaments
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">1M+</span>
+                        <span class="stat-label">Active Players</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">100+</span>
+                        <span class="stat-label">Free Games</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">50+</span>
+                        <span class="stat-label">Countries</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Featured Games -->
+            <section class="featured-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-gamepad"></i> Featured Free Games</h2>
+                    <a href="#" class="view-all" id="viewAllGames">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                
+                <div class="games-grid" id="featuredGames">
+                    <!-- Games will be loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- Live Tournaments -->
+            <section class="tournaments-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-trophy"></i> Live Tournaments</h2>
+                    <a href="#" class="view-all" id="viewAllTournaments">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                
+                <div class="tournaments-grid" id="liveTournaments">
+                    <!-- Tournaments will be loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- News Section -->
+            <section class="news-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-newspaper"></i> Gaming News</h2>
+                    <div class="news-tabs">
+                        <button class="news-tab active" data-category="gaming">Gaming</button>
+                        <button class="news-tab" data-category="esports">Esports</button>
+                        <button class="news-tab" data-category="tech">Tech</button>
+                        <button class="news-tab" data-category="all">All</button>
+                    </div>
+                </div>
+                
+                <div class="news-grid" id="newsGrid">
+                    <!-- News will be loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- Social Feed -->
+            <section class="social-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-comments"></i> Community Feed</h2>
+                    <button class="btn-primary" id="createPostBtn"><i class="fas fa-plus"></i> Create Post</button>
+                </div>
+                
+                <div class="feed-container" id="socialFeed">
+                    <!-- Posts will be loaded dynamically -->
+                </div>
+                
+                <div class="load-more">
+                    <button class="btn-secondary" id="loadMorePosts">Load More</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Games Section -->
+        <div id="gamesSection" class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-gamepad"></i> All Games</h2>
+                <div class="game-filters">
+                    <select id="gameCategoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="Action">Action</option>
+                        <option value="Puzzle">Puzzle</option>
+                        <option value="Strategy">Strategy</option>
+                        <option value="Casual">Casual</option>
+                        <option value="Card Game">Card Game</option>
+                    </select>
+                    <select id="gameDifficultyFilter">
+                        <option value="">All Difficulties</option>
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="games-grid" id="allGames">
+                <!-- All games will be loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- Tournaments Section -->
+        <div id="tournamentsSection" class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-trophy"></i> Tournaments</h2>
+                <div class="tournament-filters">
+                    <select id="tournamentStatusFilter">
+                        <option value="all">All Tournaments</option>
+                        <option value="registration">Registration Open</option>
+                        <option value="ongoing">Live Now</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="tournaments-grid" id="allTournaments">
+                <!-- Tournaments will be loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- News Section -->
+        <div id="newsSection" class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-newspaper"></i> Gaming News</h2>
+                <div class="news-tabs">
+                    <button class="news-tab active" data-category="gaming">Gaming</button>
+                    <button class="news-tab" data-category="esports">Esports</button>
+                    <button class="news-tab" data-category="tech">Tech</button>
+                    <button class="news-tab" data-category="business">Business</button>
+                    <button class="news-tab" data-category="all">All</button>
+                </div>
+            </div>
+            
+            <div class="news-grid" id="allNews">
+                <!-- News will be loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- Community Section -->
+        <div id="communitySection" class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-comments"></i> Community Feed</h2>
+                <button class="btn-primary" id="communityCreatePostBtn"><i class="fas fa-plus"></i> Create Post</button>
+            </div>
+            
+            <div class="feed-container" id="communityFeed">
+                <!-- Community posts will be loaded dynamically -->
+            </div>
+            
+            <div class="load-more">
+                <button class="btn-secondary" id="loadMoreCommunityPosts">Load More</button>
+            </div>
+        </div>
+
+        <!-- Game Player Section (hidden by default) -->
+        <div id="gamePlayerSection" class="section">
+            <div class="game-player-section">
+                <div class="game-player-header">
+                    <h2 id="currentGameTitle">Game Title</h2>
+                    <button class="btn-secondary back-to-games" id="backToGamesBtn">
+                        <i class="fas fa-arrow-left"></i> Back to Games
+                    </button>
+                </div>
+                <div class="game-player-container" id="gamePlayerContainer">
+                    <!-- Game iframe will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Post Modal -->
+    <div class="modal" id="postModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create Post</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="postContent" placeholder="What's on your mind?" rows="4"></textarea>
+                <div class="post-options">
+                    <button class="option-btn" id="addImageBtn">
+                        <i class="fas fa-image"></i> Image
+                    </button>
+                    <select id="postPrivacy">
+                        <option value="public">Public</option>
+                        <option value="friends">Friends</option>
+                        <option value="private">Private</option>
+                    </select>
+                </div>
+                <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                <div id="imagePreview" class="image-preview"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelPost">Cancel</button>
+                <button class="btn-primary" id="submitPost">Post</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Login</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox">
+                            <input type="checkbox"> Remember me
+                        </label>
+                        <a href="#">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="btn-primary btn-full">Login</button>
+                </form>
+                <div class="form-footer">
+                    Don't have an account? <a href="#" id="switchToSignup">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create Account</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="signupForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="nickname">Nickname</label>
+                        <input type="text" id="nickname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="signupPassword">Password</label>
+                            <input type="password" id="signupPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dob">Date of Birth</label>
+                            <input type="date" id="dob" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <select id="country" required>
+                                <option value="">Select Country</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">Bio (optional)</label>
+                        <textarea id="bio" rows="3" maxlength="500"></textarea>
+                    </div>
+                    <div class="form-group terms">
+                        <label class="checkbox">
+                            <input type="checkbox" required> I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn-primary btn-full">Sign Up</button>
+                </form>
+                <div class="form-footer">
+                    Already have an account? <a href="#" id="switchToLogin">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>ThumbsApp</h4>
+                <p>The global gaming community for players worldwide.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#" class="footer-link" data-section="games">Games</a></li>
+                    <li><a href="#" class="footer-link" data-section="tournaments">Tournaments</a></li>
+                    <li><a href="#" class="footer-link" data-section="news">News</a></li>
+                    <li><a href="#" class="footer-link" data-section="community">Community</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Report a Problem</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Community Guidelines</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 ThumbsApp. All rights reserved. Made for gamers worldwide.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Application State
+        let currentUser = null;
+        let currentPage = 1;
+        let currentGame = null;
+        
+        // Mock Data
+        const games = [
+            {
+                id: 1,
+                title: "Sudoku Master",
+                description: "Classic number puzzle game. Challenge your brain!",
+                category: "Puzzle",
+                difficulty: "Medium",
+                plays: 15420,
+                embedCode: `<iframe src="https://www.crazygames.com/embed/sudoku" style="width:100%;height:600px;" frameborder="0" allow="gamepad *;"></iframe>`
+            },
+            {
+                id: 2,
+                title: "Chess Online",
+                description: "Play chess against players worldwide",
+                category: "Strategy",
+                difficulty: "Hard",
+                plays: 8920,
+                embedCode: `<iframe src="https://www.chess.com/emboard?id=123456" style="width:100%;height:600px;" frameborder="0"></iframe>`
+            },
+            {
+                id: 3,
+                title: "2048 Puzzle",
+                description: "Merge numbers to reach 2048",
+                category: "Puzzle",
+                difficulty: "Easy",
+                plays: 32150,
+                embedCode: `<iframe src="https://www.crazygames.com/embed/2048" style="width:100%;height:600px;" frameborder="0" allow="gamepad *;"></iframe>`
+            },
+            {
+                id: 4,
+                title: "Solitaire",
+                description: "Classic card game solitaire",
+                category: "Card Game",
+                difficulty: "Medium",
+                plays: 12450,
+                embedCode: `<iframe src="https://www.crazygames.com/embed/solitaire" style="width:100%;height:600px;" frameborder="0" allow="gamepad *;"></iframe>`
+            },
+            {
+                id: 5,
+                title: "Word Search",
+                description: "Find hidden words in the grid",
+                category: "Puzzle",
+                difficulty: "Easy",
+                plays: 8750,
+                embedCode: `<iframe src="https://www.crazygames.com/embed/word-search" style="width:100%;height:600px;" frameborder="0" allow="gamepad *;"></iframe>`
+            },
+            {
+                id: 6,
+                title: "Snake Game",
+                description: "Classic snake game - eat and grow",
+                category: "Casual",
+                difficulty: "Easy",
+                plays: 45670,
+                embedCode: `<iframe src="https://www.crazygames.com/embed/snake" style="width:100%;height:600px;" frameborder="0" allow="gamepad *;"></iframe>`
+            }
+        ];
+
+        const tournaments = [
+            {
+                id: 1,
+                title: "Summer Clash 2024",
+                game: "FURY X",
+                prizePool: "$50,000",
+                participants: 128,
+                maxParticipants: 256,
+                startDate: "2024-07-15",
+                status: "registration"
+            },
+            {
+                id: 2,
+                title: "Pro League Season 5",
+                game: "NBA 2K24",
+                prizePool: "$25,000",
+                participants: 64,
+                maxParticipants: 128,
+                startDate: "2024-07-20",
+                status: "registration"
+            },
+            {
+                id: 3,
+                title: "World Championship",
+                game: "eFootball",
+                prizePool: "$100,000",
+                participants: 512,
+                maxParticipants: 512,
+                startDate: "2024-07-10",
+                status: "ongoing"
+            }
+        ];
+
+        const newsData = {
+            gaming: [
+                {
+                    title: "New Battle Royale Game Breaks Records",
+                    summary: "Latest battle royale attracts 50 million players in first week",
+                    source: "GameSpot",
+                    publishedAt: new Date().toISOString()
+                },
+                {
+                    title: "ESports World Cup 2024 Announced",
+                    summary: "$10 million prize pool across 15 games",
+                    source: "ESPN",
+                    publishedAt: new Date().toISOString()
+                },
+                {
+                    title: "New Gaming Console Release Date Revealed",
+                    summary: "Next-gen console launching holiday 2024",
+                    source: "IGN",
+                    publishedAt: new Date().toISOString()
+                }
+            ],
+            esports: [
+                {
+                    title: "Team Liquid Wins Major Tournament",
+                    summary: "Historic victory in grand finals",
+                    source: "ESPN",
+                    publishedAt: new Date().toISOString()
+                },
+                {
+                    title: "New Record Set in League Finals",
+                    summary: "Viewership peaks at 5 million",
+                    source: "Dexerto",
+                    publishedAt: new Date().toISOString()
+                }
+            ],
+            tech: [
+                {
+                    title: "AI Revolution in Gaming",
+                    summary: "New AI technology creates dynamic game worlds",
+                    source: "TechCrunch",
+                    publishedAt: new Date().toISOString()
+                },
+                {
+                    title: "Cloud Gaming Growth",
+                    summary: "Streaming services see 200% user increase",
+                    source: "The Verge",
+                    publishedAt: new Date().toISOString()
+                }
+            ],
+            business: [
+                {
+                    title: "Gaming Industry Revenue Hits $200B",
+                    summary: "Mobile gaming leads the growth",
+                    source: "Bloomberg",
+                    publishedAt: new Date().toISOString()
+                }
+            ]
+        };
+
+        const posts = [
+            {
+                id: 1,
+                user: {
+                    nickname: "GameMaster",
+                    username: "gamemaster",
+                    avatar: null
+                },
+                content: "Just reached level 100 in my favorite game! 🎮",
+                likes: 24,
+                comments: 5,
+                shares: 2,
+                createdAt: new Date(Date.now() - 3600000).toISOString()
+            },
+            {
+                id: 2,
+                user: {
+                    nickname: "ProPlayer",
+                    username: "proplayer",
+                    avatar: null
+                },
+                content: "Looking for teammates for tomorrow's tournament. Anyone interested?",
+                likes: 15,
+                comments: 8,
+                shares: 1,
+                createdAt: new Date(Date.now() - 7200000).toISOString()
+            },
+            {
+                id: 3,
+                user: {
+                    nickname: "Newbie",
+                    username: "newbie",
+                    avatar: null
+                },
+                content: "Just joined this awesome community! Any game recommendations for beginners?",
+                likes: 42,
+                comments: 12,
+                shares: 0,
+                createdAt: new Date(Date.now() - 86400000).toISOString()
+            }
+        ];
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', () => {
+            init();
+        });
+
+        function init() {
+            // Load initial data
+            loadFeaturedGames();
+            loadAllGames();
+            loadLiveTournaments();
+            loadAllTournaments();
+            loadNews('gaming');
+            loadAllNews('gaming');
+            loadSocialFeed();
+            loadCommunityFeed();
+            
+            // Load countries
+            loadCountries();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Check for saved user
+            checkSavedUser();
         }
 
-        setupTabs() {
-          document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', (e) => {
-              document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-              tab.classList.add('active');
-              this.renderTrendingNews(tab.innerText);
+        function setupEventListeners() {
+            // Navigation
+            document.querySelectorAll('.nav-link, .mobile-nav-link, .footer-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = link.dataset.section;
+                    if (section) {
+                        showSection(section);
+                    }
+                });
             });
-          });
+
+            // View all links
+            document.getElementById('viewAllGames').addEventListener('click', (e) => {
+                e.preventDefault();
+                showSection('games');
+            });
+
+            document.getElementById('viewAllTournaments').addEventListener('click', (e) => {
+                e.preventDefault();
+                showSection('tournaments');
+            });
+
+            // Hero buttons
+            document.getElementById('playNowBtn').addEventListener('click', () => {
+                showSection('games');
+            });
+
+            document.getElementById('joinTournamentsBtn').addEventListener('click', () => {
+                showSection('tournaments');
+            });
+
+            // Back to games button
+            document.getElementById('backToGamesBtn').addEventListener('click', () => {
+                showSection('games');
+            });
+
+            // News tabs
+            document.querySelectorAll('.news-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const container = tab.closest('.news-section, #newsSection');
+                    if (container) {
+                        const tabs = container.querySelectorAll('.news-tab');
+                        tabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        
+                        if (container.id === 'newsSection') {
+                            loadAllNews(tab.dataset.category);
+                        } else {
+                            loadNews(tab.dataset.category);
+                        }
+                    }
+                });
+            });
+
+            // Filters
+            document.getElementById('gameCategoryFilter')?.addEventListener('change', filterGames);
+            document.getElementById('gameDifficultyFilter')?.addEventListener('change', filterGames);
+            document.getElementById('tournamentStatusFilter')?.addEventListener('change', filterTournaments);
+
+            // Search
+            let searchTimeout;
+            document.getElementById('globalSearch').addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    handleSearch(e.target.value);
+                }, 500);
+            });
+
+            // Create post buttons
+            document.getElementById('createPostBtn').addEventListener('click', () => openPostModal());
+            document.getElementById('communityCreatePostBtn').addEventListener('click', () => openPostModal());
+
+            // Post modal
+            document.getElementById('addImageBtn').addEventListener('click', () => {
+                document.getElementById('imageInput').click();
+            });
+
+            document.getElementById('imageInput').addEventListener('change', handleImagePreview);
+
+            document.getElementById('cancelPost').addEventListener('click', closePostModal);
+            document.getElementById('submitPost').addEventListener('click', createPost);
+
+            // Login/Signup
+            document.getElementById('loginBtn').addEventListener('click', () => {
+                document.getElementById('loginModal').classList.add('active');
+            });
+
+            document.getElementById('signupBtn').addEventListener('click', () => {
+                document.getElementById('signupModal').classList.add('active');
+            });
+
+            document.getElementById('switchToSignup').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('loginModal').classList.remove('active');
+                document.getElementById('signupModal').classList.add('active');
+            });
+
+            document.getElementById('switchToLogin').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('signupModal').classList.remove('active');
+                document.getElementById('loginModal').classList.add('active');
+            });
+
+            // Close modals
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('loginModal').classList.remove('active');
+                    document.getElementById('signupModal').classList.remove('active');
+                    document.getElementById('postModal').classList.remove('active');
+                });
+            });
+
+            // Forms
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('signupForm').addEventListener('submit', handleSignup);
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+
+            // Load more buttons
+            document.getElementById('loadMorePosts').addEventListener('click', () => {
+                currentPage++;
+                loadSocialFeed(currentPage);
+            });
+
+            document.getElementById('loadMoreCommunityPosts').addEventListener('click', () => {
+                currentPage++;
+                loadCommunityFeed(currentPage);
+            });
         }
 
-        // wiki AI functional
-        askWiki() {
-          let input = document.getElementById('wikiInput');
-          let q = input.value.trim();
-          if (!q) return;
-          let msgBox = document.getElementById('wikiMessages');
-          msgBox.innerHTML += `<div><strong>You:</strong> ${q}</div>`;
-          input.value = '';
-          // Simulate AI response (original logic)
-          setTimeout(() => {
-            let ans = "I found: Reaction duel average 180ms. Use peripheral vision.";
-            msgBox.innerHTML += `<div><strong>AI:</strong> ${ans}</div>`;
-            msgBox.scrollTop = msgBox.scrollHeight;
-          }, 400);
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
+            const section = document.getElementById(sectionId + 'Section');
+            if (section) {
+                section.classList.add('active');
+            }
+
+            // Update navigation
+            document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.section === sectionId) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Scroll to top
+            window.scrollTo(0, 0);
         }
 
-        // navigation (demo)
-        navigate(page) {
-          this.showToast(`Navigating to ${page} (demo)`);
+        function loadFeaturedGames() {
+            const container = document.getElementById('featuredGames');
+            const featuredGames = games.slice(0, 6);
+            
+            container.innerHTML = featuredGames.map(game => renderGameCard(game)).join('');
+            
+            // Add click handlers
+            container.querySelectorAll('.play-now-btn').forEach(btn => {
+                btn.addEventListener('click', () => playGame(btn.dataset.gameId));
+            });
         }
 
-        showNotif() { this.showToast('🔔 Notifications (demo)'); }
-        showMessages() { this.showToast('📨 Messages (demo)'); }
-        showSaved() { this.showToast('Saved items'); }
-        showSettings() { this.showToast('Settings'); }
-
-        toggleDarkMode() {
-          document.body.classList.toggle('dark');
+        function loadAllGames() {
+            const container = document.getElementById('allGames');
+            container.innerHTML = games.map(game => renderGameCard(game)).join('');
+            
+            container.querySelectorAll('.play-now-btn').forEach(btn => {
+                btn.addEventListener('click', () => playGame(btn.dataset.gameId));
+            });
         }
 
-        logout() {
-          this.showToast('Logged out (demo)');
+        function renderGameCard(game) {
+            return `
+                <div class="game-card">
+                    <div class="game-thumbnail">
+                        <i class="fas fa-gamepad"></i>
+                        <span class="game-badge">${game.category}</span>
+                    </div>
+                    <div class="game-info">
+                        <h3>${game.title}</h3>
+                        <p>${game.description.substring(0, 60)}...</p>
+                        <div class="game-meta">
+                            <span class="difficulty ${game.difficulty.toLowerCase()}">${game.difficulty}</span>
+                            <span class="play-count"><i class="fas fa-users"></i> ${game.plays.toLocaleString()}</span>
+                        </div>
+                        <button class="play-now-btn" data-game-id="${game.id}">
+                            <i class="fas fa-play"></i> Play Now
+                        </button>
+                    </div>
+                </div>
+            `;
         }
 
-        showToast(msg) {
-          let toast = document.createElement('div');
-          toast.className = 'toast';
-          toast.style.background = 'var(--bg-surface)';
-          toast.style.borderLeft = '4px solid var(--accent-blue)';
-          toast.style.padding = '12px 24px';
-          toast.style.borderRadius = '40px';
-          toast.style.boxShadow = 'var(--shadow-md)';
-          toast.style.marginBottom = '8px';
-          toast.innerText = msg;
-          document.getElementById('toastContainer').appendChild(toast);
-          setTimeout(() => toast.remove(), 2000);
+        function playGame(gameId) {
+            const game = games.find(g => g.id == gameId);
+            if (game) {
+                currentGame = game;
+                document.getElementById('currentGameTitle').textContent = game.title;
+                document.getElementById('gamePlayerContainer').innerHTML = game.embedCode || '<div style="color: white; text-align: center; padding: 2rem;">Game loading...</div>';
+                showSection('gamePlayer');
+            }
         }
 
-        formatTime(ts) {
-          let sec = Math.floor((Date.now() - ts) / 1000);
-          if (sec < 60) return 'now';
-          if (sec < 3600) return Math.floor(sec / 60) + 'm ago';
-          return Math.floor(sec / 3600) + 'h ago';
+        function loadLiveTournaments() {
+            const container = document.getElementById('liveTournaments');
+            container.innerHTML = tournaments.map(renderTournamentCard).join('');
         }
-      }
 
-      window.app = new ThumbsApp();
-    })();
-  </script>
+        function loadAllTournaments() {
+            const container = document.getElementById('allTournaments');
+            container.innerHTML = tournaments.map(renderTournamentCard).join('');
+        }
+
+        function renderTournamentCard(tournament) {
+            return `
+                <div class="tournament-card">
+                    <div class="tournament-header">
+                        <h3>${tournament.title}</h3>
+                        <span class="prize-pool">${tournament.prizePool}</span>
+                    </div>
+                    <div class="tournament-info">
+                        <p><i class="fas fa-gamepad"></i> ${tournament.game}</p>
+                        <p><i class="fas fa-users"></i> ${tournament.participants}/${tournament.maxParticipants} players</p>
+                        <p><i class="fas fa-calendar"></i> Starts: ${new Date(tournament.startDate).toLocaleDateString()}</p>
+                    </div>
+                    <div class="tournament-footer">
+                        <span class="registered">${tournament.participants} registered</span>
+                        <button class="register-btn ${tournament.participants >= tournament.maxParticipants ? 'full' : ''}" 
+                                ${tournament.participants >= tournament.maxParticipants ? 'disabled' : ''}>
+                            ${tournament.status === 'ongoing' ? 'Live' : 'Register'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadNews(category) {
+            const container = document.getElementById('newsGrid');
+            const news = newsData[category] || [];
+            
+            container.innerHTML = news.map(item => `
+                <div class="news-card">
+                    <div class="news-image">
+                        <i class="fas fa-newspaper"></i>
+                        <span class="news-source">${item.source}</span>
+                    </div>
+                    <div class="news-content">
+                        <h4>${item.title}</h4>
+                        <p>${item.summary}</p>
+                        <div class="news-meta">
+                            <span><i class="far fa-clock"></i> ${new Date(item.publishedAt).toLocaleDateString()}</span>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadAllNews(category) {
+            const container = document.getElementById('allNews');
+            let allNews = [];
+            
+            if (category === 'all') {
+                Object.values(newsData).forEach(catNews => {
+                    allNews = [...allNews, ...catNews];
+                });
+            } else {
+                allNews = newsData[category] || [];
+            }
+            
+            container.innerHTML = allNews.map(item => `
+                <div class="news-card">
+                    <div class="news-image">
+                        <i class="fas fa-newspaper"></i>
+                        <span class="news-source">${item.source}</span>
+                    </div>
+                    <div class="news-content">
+                        <h4>${item.title}</h4>
+                        <p>${item.summary}</p>
+                        <div class="news-meta">
+                            <span><i class="far fa-clock"></i> ${new Date(item.publishedAt).toLocaleDateString()}</span>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadSocialFeed(page = 1) {
+            const container = document.getElementById('socialFeed');
+            container.innerHTML = posts.map(post => renderPost(post)).join('');
+            
+            // Add like handlers
+            container.querySelectorAll('.like-btn').forEach(btn => {
+                btn.addEventListener('click', () => handleLike(btn.dataset.postId, btn));
+            });
+        }
+
+        function loadCommunityFeed(page = 1) {
+            const container = document.getElementById('communityFeed');
+            container.innerHTML = posts.map(post => renderPost(post)).join('');
+            
+            container.querySelectorAll('.like-btn').forEach(btn => {
+                btn.addEventListener('click', () => handleLike(btn.dataset.postId, btn));
+            });
+        }
+
+        function renderPost(post) {
+            return `
+                <div class="feed-post">
+                    <div class="post-header">
+                        <div class="post-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="post-user-info">
+                            <h4>${post.user.nickname}</h4>
+                            <span>@${post.user.username}</span>
+                        </div>
+                        <span class="post-time">${timeAgo(post.createdAt)}</span>
+                    </div>
+                    <div class="post-content">
+                        <p>${post.content}</p>
+                    </div>
+                    <div class="post-stats">
+                        <span><i class="fas fa-heart"></i> ${post.likes}</span>
+                        <span><i class="fas fa-comment"></i> ${post.comments}</span>
+                        <span><i class="fas fa-share"></i> ${post.shares}</span>
+                    </div>
+                    <div class="post-actions">
+                        <button class="post-action-btn like-btn" data-post-id="${post.id}">
+                            <i class="far fa-heart"></i> Like
+                        </button>
+                        <button class="post-action-btn comment-btn" data-post-id="${post.id}">
+                            <i class="far fa-comment"></i> Comment
+                        </button>
+                        <button class="post-action-btn share-btn" data-post-id="${post.id}">
+                            <i class="far fa-share-square"></i> Share
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function timeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            
+            if (seconds < 60) return 'just now';
+            if (seconds < 3600) return Math.floor(seconds / 60) + ' minutes ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
+            return Math.floor(seconds / 86400) + ' days ago';
+        }
+
+        function handleLike(postId, button) {
+            if (!currentUser) {
+                showNotification('Please login to like posts', 'error');
+                document.getElementById('loginModal').classList.add('active');
+                return;
+            }
+            
+            const icon = button.querySelector('i');
+            if (button.classList.contains('liked')) {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                button.classList.remove('liked');
+            } else {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                button.classList.add('liked');
+            }
+        }
+
+        function filterGames() {
+            const category = document.getElementById('gameCategoryFilter').value;
+            const difficulty = document.getElementById('gameDifficultyFilter').value;
+            
+            let filteredGames = games;
+            
+            if (category) {
+                filteredGames = filteredGames.filter(g => g.category === category);
+            }
+            
+            if (difficulty) {
+                filteredGames = filteredGames.filter(g => g.difficulty === difficulty);
+            }
+            
+            const container = document.getElementById('allGames');
+            container.innerHTML = filteredGames.map(game => renderGameCard(game)).join('');
+            
+            container.querySelectorAll('.play-now-btn').forEach(btn => {
+                btn.addEventListener('click', () => playGame(btn.dataset.gameId));
+            });
+        }
+
+        function filterTournaments() {
+            const status = document.getElementById('tournamentStatusFilter').value;
+            
+            let filteredTournaments = tournaments;
+            
+            if (status !== 'all') {
+                filteredTournaments = filteredTournaments.filter(t => t.status === status);
+            }
+            
+            const container = document.getElementById('allTournaments');
+            container.innerHTML = filteredTournaments.map(renderTournamentCard).join('');
+        }
+
+        function handleSearch(query) {
+            if (!query.trim()) return;
+            
+            // Search in games
+            const gameResults = games.filter(g => 
+                g.title.toLowerCase().includes(query.toLowerCase()) ||
+                g.description.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            // Search in tournaments
+            const tournamentResults = tournaments.filter(t => 
+                t.title.toLowerCase().includes(query.toLowerCase()) ||
+                t.game.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            // Search in posts
+            const postResults = posts.filter(p => 
+                p.content.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            console.log('Search results:', { games: gameResults, tournaments: tournamentResults, posts: postResults });
+            showNotification(`Found ${gameResults.length} games, ${tournamentResults.length} tournaments`, 'info');
+        }
+
+        function openPostModal() {
+            if (!currentUser) {
+                showNotification('Please login to create a post', 'error');
+                document.getElementById('loginModal').classList.add('active');
+                return;
+            }
+            document.getElementById('postModal').classList.add('active');
+        }
+
+        function closePostModal() {
+            document.getElementById('postModal').classList.remove('active');
+            document.getElementById('postContent').value = '';
+            document.getElementById('imagePreview').innerHTML = '';
+        }
+
+        function handleImagePreview(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const preview = document.getElementById('imagePreview');
+                preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function createPost() {
+            if (!currentUser) {
+                showNotification('Please login to create a post', 'error');
+                return;
+            }
+            
+            const content = document.getElementById('postContent').value;
+            
+            if (!content.trim()) {
+                showNotification('Please enter some content', 'error');
+                return;
+            }
+            
+            // In a real app, this would send to backend
+            const newPost = {
+                id: posts.length + 1,
+                user: {
+                    nickname: currentUser.nickname,
+                    username: currentUser.username,
+                    avatar: null
+                },
+                content: content,
+                likes: 0,
+                comments: 0,
+                shares: 0,
+                createdAt: new Date().toISOString()
+            };
+            
+            posts.unshift(newPost);
+            
+            closePostModal();
+            loadSocialFeed(1);
+            loadCommunityFeed(1);
+            
+            showNotification('Post created successfully!', 'success');
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Simulate login (in real app, this would call an API)
+            if (email && password) {
+                currentUser = {
+                    id: 1,
+                    firstName: 'John',
+                    lastName: 'Doe',
+                    nickname: 'GameMaster',
+                    username: 'gamemaster',
+                    email: email,
+                    avatar: null
+                };
+                
+                localStorage.setItem('user', JSON.stringify(currentUser));
+                
+                document.getElementById('loginModal').classList.remove('active');
+                updateUIForLoggedInUser();
+                showNotification('Login successful!', 'success');
+            } else {
+                showNotification('Please fill in all fields', 'error');
+            }
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const nickname = document.getElementById('nickname').value;
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+            
+            // Simulate signup (in real app, this would call an API)
+            currentUser = {
+                id: 1,
+                firstName: firstName,
+                lastName: lastName,
+                nickname: nickname,
+                username: username,
+                email: email,
+                avatar: null
+            };
+            
+            localStorage.setItem('user', JSON.stringify(currentUser));
+            
+            document.getElementById('signupModal').classList.remove('active');
+            updateUIForLoggedInUser();
+            showNotification('Account created successfully!', 'success');
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('user');
+            updateUIForLoggedOutUser();
+            showNotification('Logged out successfully', 'info');
+        }
+
+        function checkSavedUser() {
+            const savedUser = localStorage.getItem('user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUIForLoggedInUser();
+            } else {
+                updateUIForLoggedOutUser();
+            }
+        }
+
+        function updateUIForLoggedInUser() {
+            document.getElementById('userMenu').style.display = 'flex';
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('signupBtn').style.display = 'none';
+            
+            if (currentUser && currentUser.avatar) {
+                document.getElementById('userAvatar').src = currentUser.avatar;
+            }
+        }
+
+        function updateUIForLoggedOutUser() {
+            document.getElementById('userMenu').style.display = 'none';
+            document.getElementById('loginBtn').style.display = 'inline-block';
+            document.getElementById('signupBtn').style.display = 'inline-block';
+        }
+
+        function loadCountries() {
+            const countrySelect = document.getElementById('country');
+            const countries = [
+                "United States", "United Kingdom", "Canada", "Australia", "Germany", "France", 
+                "Japan", "Brazil", "India", "China", "South Africa", "Mexico", "Spain", "Italy",
+                "Netherlands", "Sweden", "Norway", "Denmark", "Finland", "Belgium", "Austria",
+                "Switzerland", "Ireland", "Portugal", "Greece", "Poland", "Czech Republic",
+                "Hungary", "Romania", "Bulgaria", "Croatia", "Ukraine", "Russia", "Turkey",
+                "Israel", "Saudi Arabia", "UAE", "Egypt", "Morocco", "Nigeria", "Kenya",
+                "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "New Zealand",
+                "Singapore", "Malaysia", "Indonesia", "Philippines", "Thailand", "Vietnam",
+                "South Korea", "Pakistan", "Bangladesh", "Sri Lanka"
+            ];
+
+            countries.sort().forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                countrySelect.appendChild(option);
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                <span>${message}</span>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
